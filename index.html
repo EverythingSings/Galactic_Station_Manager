@@ -9,30 +9,41 @@
 <body>
   <div id="game">
     <h1>Galactic Station Manager</h1>
+    <div id="lore">
+      <p>
+      In the year 3057, humanity has spread across the stars. 
+        </p>
+    </div>
     <div id="resources">
       <div class="resource">
         <span class="emoji">🪨</span>
         <span id="minerals">0</span> Minerals
+        <div class="resource-desc">Essential for construction and upgrades.</div>
       </div>
       <div class="resource">
         <span class="emoji">💨</span>
         <span id="gas">0</span> Gas
+        <div class="resource-desc">Required for advanced technologies and energy.</div>
       </div>
       <div class="resource">
         <span class="emoji">💎</span>
         <span id="crystals">0</span> Crystals
+        <div class="resource-desc">Used in high-tech equipment and research.</div>
       </div>
       <div class="resource">
         <span class="emoji">🧊</span>
         <span id="deuterium">0</span> Deuterium
+        <div class="resource-desc">Crucial for sustaining your station's energy needs.</div>
       </div>
       <div class="resource">
         <span class="emoji">⚡</span>
-        <span id="energy">100</span> / <span id="maxEnergy">100</span> Energy
+        <span id="energy">100</span> Energy
+        <div class="resource-desc">Powers your station and all activities.</div>
       </div>
       <div class="resource">
         <span class="emoji">💰</span>
         <span id="credits">0</span> Credits
+        <div class="resource-desc">Used to trade and procure essential items in the market.</div>
       </div>
     </div>
     <div id="tabs">
@@ -49,14 +60,17 @@
           <button id="extractButton" class="action-button">Extract Gas</button>
         </div>
         <h2>Upgrades</h2>
-        <div id="upgrades"></div>
+        <div id="upgrades">
+        </div>
       </div>
       <div id="production-tab" class="tab-pane">
         <h2>Production Buildings</h2>
+<p>As the commander of a remote space station, it is your duty to determine the fate of your station and the countless lives depending on it.</p>
         <div id="buildings"></div>
       </div>
       <div id="research-tab" class="tab-pane">
         <h2>Research</h2>
+        <p>Explore uncharted space, mine precious minerals, extract gases, synthesize crystals, and collect deuterium to power your station. Good luck, Commander!</p>
         <div id="research"></div>
       </div>
       <div id="market-tab" class="tab-pane">

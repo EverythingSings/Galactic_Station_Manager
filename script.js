@@ -35,11 +35,11 @@ const game = {
     deuterium: 5,
   },
   missions: [
-    { name: "First Steps", description: "Accumulate 1000 minerals", check: () => game.minerals >= 1000, reward: { credits: 100 } },
-    { name: "Gas Giant", description: "Accumulate 1000 gas", check: () => game.gas >= 1000, reward: { credits: 150 } },
-    { name: "Crystal Clear", description: "Synthesize 500 crystals", check: () => game.crystals >= 500, reward: { credits: 200 } },
-    { name: "Heavy Water", description: "Collect 250 deuterium", check: () => game.deuterium >= 250, reward: { credits: 300 } },
-    { name: "Researcher", description: "Reach level 5 in any research", check: () => Object.values(game.research).some(level => level >= 5), reward: { credits: 500 } },
+    { name: "First Steps", description: "Accumulate 1000 minerals to lay the foundation of your station's future growth.", check: () => game.minerals >= 1000, reward: { credits: 100 } },
+    { name: "Gas Giant", description: "Accumulate 1000 gas to fuel the advanced technologies of the station.", check: () => game.gas >= 1000, reward: { credits: 150 } },
+    { name: "Crystal Clear", description: "Synthesize 500 crystals for high-tech equipment.", check: () => game.crystals >= 500, reward: { credits: 200 } },
+    { name: "Heavy Water", description: "Collect 250 deuterium to ensure a stable energy supply.", check: () => game.deuterium >= 250, reward: { credits: 300 } },
+    { name: "Researcher", description: "Reach level 5 in any research to demonstrate your technological prowess.", check: () => Object.values(game.research).some(level => level >= 5), reward: { credits: 500 } },
   ],
   completedMissions: [],
 };
@@ -50,7 +50,6 @@ function updateDisplay() {
   document.getElementById('crystals').textContent = Math.floor(game.crystals);
   document.getElementById('deuterium').textContent = Math.floor(game.deuterium);
   document.getElementById('energy').textContent = Math.floor(game.energy);
-  document.getElementById('maxEnergy').textContent = game.maxEnergy;
   document.getElementById('credits').textContent = Math.floor(game.credits);
   updateUpgrades();
   updateBuildings();
