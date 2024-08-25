@@ -60,7 +60,6 @@ const upgradeEffects = {
   "Energy Efficiency": () => game.energyRegenRate++,
 };
 
-// Additional map for mission check effects
 const missionEffects = {
   "First Steps": () => game.minerals >= 1000,
   "Gas Giant": () => game.gas >= 1000,
@@ -69,7 +68,6 @@ const missionEffects = {
   "Researcher": () => Object.values(game.research).some(level => level >= 5),
 };
 
-// Save the game state to localStorage, without functions
 function saveGameState() {
   const gameState = {
     ...game,
@@ -79,7 +77,6 @@ function saveGameState() {
   localStorage.setItem('gameState', JSON.stringify(gameState));
 }
 
-// Load the game state from localStorage and reassign functions
 function loadGameState() {
   const savedState = localStorage.getItem('gameState');
   if (savedState) {
@@ -94,10 +91,9 @@ function loadGameState() {
   }
 }
 
-// Clear the game state from localStorage
 function clearGameState() {
   localStorage.removeItem('gameState');
-  location.reload(); // Reload the page to reset the game
+  location.reload();
 }
 
 function checkMission(index) {
@@ -105,64 +101,40 @@ function checkMission(index) {
   if (mission.check()) {
     game.completedMissions.push(index);
     Object.entries(mission.reward).forEach(([resource, amount]) => game[resource] += amount);
-    
-    // Update role based on the number of completed missions
     const completedCount = game.completedMissions.length;
     if (roles[completedCount]) {
       game.role = roles[completedCount];
     }
-    
-    saveGameState(); // Save the game state
+    saveGameState();
     updateDisplay();
-    alert(`Mission "${mission.name}" completed! Your new role is "${game.role}".`);
-  } else {
-    alert("Mission not yet completed. Keep working!");
   }
 }
 
 document.getElementById('mineMinerals').addEventListener('click', mine);
 document.getElementById('extractGas').addEventListener('click', extract);
-document.getElementById('viewCrystals').addEventListener('click', viewCrystals);
-document.getElementById('viewDeuterium').addEventListener('click', viewDeuterium);
-document.getElementById('viewEnergy').addEventListener('click', viewEnergy);
-document.getElementById('viewCredits').addEventListener('click', viewCredits);
 
 function mine() {
-  if (game.energy >= 1) {
-    game.minerals += game.mineralPower;
-    game.energy--;
-    saveGameState(); // Save the game state
-    updateDisplay();
-  } else {
-    alert("Not enough energy to mine minerals.");
-  }
+  if (!canMine()) return;
+  game.minerals += game.mineralPower;
+  game.energy--;
+  saveGameState();
+  updateDisplay();
+}
+
+function canMine() {
+  return game.energy >= 1;
 }
 
 function extract() {
-  if (game.energy >= 1) {
-    game.gas += game.gasPower;
-    game.energy--;
-    saveGameState(); // Save the game state
-    updateDisplay();
-  } else {
-    alert("Not enough energy to extract gas.");
-  }
+  if (!canExtract()) return;
+  game.gas += game.gasPower;
+  game.energy--;
+  saveGameState();
+  updateDisplay();
 }
 
-function viewCrystals() {
-  alert(`You have ${game.crystals} Crystals.`);
-}
-
-function viewDeuterium() {
-  alert(`You have ${game.deuterium} Deuterium.`);
-}
-
-function viewEnergy() {
-  alert(`You have ${game.energy} Energy out of a maximum of ${game.maxEnergy}.`);
-}
-
-function viewCredits() {
-  alert(`You have ${game.credits} Credits.`);
+function canExtract() {
+  return game.energy >= 1;
 }
 
 function updateDisplay() {
@@ -172,7 +144,11 @@ function updateDisplay() {
   document.getElementById('deuterium').textContent = Math.floor(game.deuterium);
   document.getElementById('energy').textContent = Math.floor(game.energy);
   document.getElementById('credits').textContent = Math.floor(game.credits);
-  document.getElementById('role').textContent = game.role;  // Display the role
+  document.getElementById('role').textContent = game.role;
+
+  document.getElementById('mineMinerals').disabled = !canMine();
+  document.getElementById('extractGas').disabled = !canExtract();
+
   updateUpgrades();
   updateBuildings();
   updateResearch();
@@ -185,9 +161,11 @@ function updateUpgrades() {
   upgradesDiv.innerHTML = '';
   game.upgrades.forEach((upgrade, index) => {
     const button = document.createElement('button');
-    button.className = 'upgrade-button';
-    let costText = Object.entries(upgrade.cost).map(([resource, amount]) => `${amount} ${resource}`).join(', ');
-    button.innerHTML = `${upgrade.name}<br>Cost: ${costText}`;
+    button.className = 'upgrade-button purchase-button';
+    const costText = Object.entries(upgrade.cost)
+      .map(([resource, amount]) => `${amount} ${resource}`)
+      .join(', ');
+    button.innerHTML = `<div class="button-content"><strong>${upgrade.name}</strong><span>Cost: ${costText}</span></div>`;
     button.disabled = !canAfford(upgrade.cost);
     button.onclick = () => buyUpgrade(index);
     upgradesDiv.appendChild(button);
@@ -206,7 +184,7 @@ function buyUpgrade(index) {
     upgrade.cost = Object.fromEntries(
       Object.entries(upgrade.cost).map(([resource, amount]) => [resource, Math.ceil(amount * 1.5)])
     );
-    saveGameState(); // Save the game state
+    saveGameState();
     updateDisplay();
   }
 }
@@ -217,7 +195,17 @@ function updateBuildings() {
   Object.entries(game.buildings).forEach(([building, count]) => {
     const div = document.createElement('div');
     div.className = 'building';
-    div.innerHTML = `${formatBuildingName(building)}: ${count} <button onclick="buildStructure('${building}')">Build</button>`;
+    const cost = getBuildingCost(building);
+    const costText = Object.entries(cost)
+      .map(([resource, amount]) => `${amount} ${resource}`)
+      .join(', ');
+    div.innerHTML = `
+      <div>
+        <strong>${formatBuildingName(building)}: ${count}</strong>
+        <button class="purchase-button" onclick="buildStructure('${building}')" ${canAfford(cost) ? '' : 'disabled'}>
+          <div class="button-content">Cost: ${costText}</div>
+        </button>
+      </div>`;
     buildingsDiv.appendChild(div);
   });
 }
@@ -227,10 +215,8 @@ function buildStructure(building) {
   if (canAfford(cost)) {
     Object.entries(cost).forEach(([resource, amount]) => game[resource] -= amount);
     game.buildings[building]++;
-    saveGameState(); // Save the game state
+    saveGameState();
     updateDisplay();
-  } else {
-    alert("Cannot afford to build this structure. Requires " + Object.entries(cost).map(([resource, amount]) => `${amount} ${resource}`).join(', '));
   }
 }
 
@@ -254,7 +240,17 @@ function updateResearch() {
   Object.entries(game.research).forEach(([tech, level]) => {
     const div = document.createElement('div');
     div.className = 'research-item';
-    div.innerHTML = `${formatResearchName(tech)}: Level ${level} <button onclick="conductResearch('${tech}')">Research</button>`;
+    const cost = getResearchCost(tech);
+    const costText = Object.entries(cost)
+      .map(([resource, amount]) => `${amount} ${resource}`)
+      .join(', ');
+    div.innerHTML = `
+      <div>
+        <strong>${formatResearchName(tech)}: Level ${level}</strong>
+        <button class="purchase-button" onclick="conductResearch('${tech}')" ${canAfford(cost) ? '' : 'disabled'}>
+          <div class="button-content">Cost: ${costText}</div>
+        </button>
+      </div>`;
     researchDiv.appendChild(div);
   });
 }
@@ -265,10 +261,8 @@ function conductResearch(tech) {
     Object.entries(cost).forEach(([resource, amount]) => game[resource] -= amount);
     game.research[tech]++;
     applyResearchEffects(tech);
-    saveGameState(); // Save the game state
+    saveGameState();
     updateDisplay();
-  } else {
-    alert("Cannot afford to research this technology. Requires " + Object.entries(cost).map(([resource, amount]) => `${amount} ${resource}`).join(', '));
   }
 }
 
@@ -314,50 +308,48 @@ function updateMarket() {
   const marketDiv = document.getElementById('market');
   marketDiv.innerHTML = '';
   Object.entries(game.marketPrices).forEach(([resource, price]) => {
-    const div = document.createElement('div');
-    div.className = 'market-item';
-    div.innerHTML = `
-      ${formatResourceName(resource)}: ${(price.toFixed(2))} credits
-      <button onclick="buyResource('${resource}')">Buy</button>
-      <button onclick="sellResource('${resource}')">Sell</button>
-    `;
-    marketDiv.appendChild(div);
+    const buyDisabled = game.credits < price * 10;
+    const sellDisabled = game[resource] < 10;
+    marketDiv.innerHTML += `
+      <div class="market-item">
+        <strong>${formatResourceName(resource)}: ${price.toFixed(2)} credits</strong>
+        <button class="purchase-button" onclick="buyResource('${resource}')" ${buyDisabled ? 'disabled' : ''}>
+          <div class="button-content">Buy</div>
+        </button>
+        <button class="purchase-button" onclick="sellResource('${resource}')" ${sellDisabled ? 'disabled' : ''}>
+          <div class="button-content">Sell</div>
+        </button>
+      </div>`;
   });
 }
 
 function buyResource(resource) {
-  const amount = 10; // Buy 10 units at a time
+  const amount = 10;
   const cost = game.marketPrices[resource] * amount;
   if (game.credits >= cost) {
     game.credits -= cost;
     game[resource] += amount;
     updateMarketPrices();
-    saveGameState(); // Save the game state
+    saveGameState();
     updateDisplay();
-  } else {
-    alert("Not enough credits to buy resources.");
   }
 }
 
 function sellResource(resource) {
-  const amount = 10; // Sell 10 units at a time
+  const amount = 10;
   if (game[resource] >= amount) {
     game[resource] -= amount;
     game.credits += game.marketPrices[resource] * amount;
     updateMarketPrices();
-    saveGameState(); // Save the game state
+    saveGameState();
     updateDisplay();
-  } else {
-    alert("Not enough resources to sell.");
   }
 }
 
 function updateMarketPrices() {
   Object.keys(game.marketPrices).forEach(resource => {
-    // Randomly adjust the price based on the market trends
     const priceChange = Math.random() * 0.5 - 0.25;
-    // Ensure the price doesn't go below 0
-    game.marketPrices[resource] = Math.max(0, game.marketPrices[resource] + priceChange)
+    game.marketPrices[resource] = Math.max(0, game.marketPrices[resource] + priceChange);
   });
 }
 
@@ -372,32 +364,15 @@ function updateMissions() {
     if (!game.completedMissions.includes(index)) {
       const div = document.createElement('div');
       div.className = 'mission';
-      div.innerHTML = `
-        <h3>${mission.name}</h3>
-        <p>${mission.description}</p>
-        <button onclick="checkMission(${index})">Check Progress</button>
-      `;
+      div.innerHTML = `<h3>${mission.name}</h3><p>${mission.description}</p><button class="purchase-button" onclick="checkMission(${index})" ${mission.check() ? '' : 'disabled'}>Check Progress</button>`;
       missionsDiv.appendChild(div);
     }
   });
 }
 
-function checkMission(index) {
-  const mission = game.missions[index];
-  if (mission.check()) {
-    game.completedMissions.push(index);
-    Object.entries(mission.reward).forEach(([resource, amount]) => game[resource] += amount);
-    saveGameState(); // Save the game state
-    updateDisplay();
-    alert(`Mission "${mission.name}" completed! You've been rewarded with ${Object.entries(mission.reward).map(([resource, amount]) => `${amount} ${resource}`).join(', ')}.`);
-  } else {
-    alert("Mission not yet completed. Keep working!");
-  }
-}
-
 function regenerateEnergy() {
   game.energy = Math.min(game.energy + game.energyRegenRate, game.maxEnergy);
-  saveGameState(); // Save the game state
+  saveGameState();
   updateDisplay();
 }
 
@@ -406,7 +381,7 @@ function produceResources() {
   game.gas += game.buildings.gasRefinery * 0.1;
   game.crystals += game.buildings.crystalSynthesizer * 0.05;
   game.deuterium += game.buildings.deuteriumCollector * 0.01;
-  saveGameState(); // Save the game state
+  saveGameState();
   updateDisplay();
 }
 
@@ -426,19 +401,17 @@ function activateTab(tabName) {
   
   tabs.forEach(tab => tab.classList.remove('active'));
   tabContents.forEach(content => content.classList.remove('active'));
-  
+
   document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
   document.getElementById(`${tabName}-tab`).classList.add('active');
 }
 
-// Call setupTabs on window load
 window.onload = () => {
   loadGameState();
   setupTabs();
   updateDisplay();
 };
 
-// Called on page load to initiate routines
 setInterval(regenerateEnergy, 1000);
 setInterval(produceResources, 1000);
 setupTabs();
