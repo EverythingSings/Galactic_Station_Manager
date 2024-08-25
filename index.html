@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Galactic Station Manager</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div id="game">
+    <h1>Galactic Station Manager</h1>
+    <div id="resources">
+      <div class="resource">
+        <span class="emoji">🪨</span>
+        <span id="minerals">0</span> Minerals
+      </div>
+      <div class="resource">
+        <span class="emoji">💨</span>
+        <span id="gas">0</span> Gas
+      </div>
+      <div class="resource">
+        <span class="emoji">💎</span>
+        <span id="crystals">0</span> Crystals
+      </div>
+      <div class="resource">
+        <span class="emoji">🧊</span>
+        <span id="deuterium">0</span> Deuterium
+      </div>
+      <div class="resource">
+        <span class="emoji">⚡</span>
+        <span id="energy">100</span> / <span id="maxEnergy">100</span> Energy
+      </div>
+      <div class="resource">
+        <span class="emoji">💰</span>
+        <span id="credits">0</span> Credits
+      </div>
+    </div>
+    <div id="tabs">
+      <button class="tab-button active" data-tab="main">Main</button>
+      <button class="tab-button" data-tab="production">Production</button>
+      <button class="tab-button" data-tab="research">Research</button>
+      <button class="tab-button" data-tab="market">Market</button>
+      <button class="tab-button" data-tab="missions">Missions</button>
+    </div>
+    <div id="tab-content">
+      <div id="main-tab" class="tab-pane active">
+        <div id="actions">
+          <button id="mineButton" class="action-button">Mine Minerals</button>
+          <button id="extractButton" class="action-button">Extract Gas</button>
+        </div>
+        <h2>Upgrades</h2>
+        <div id="upgrades"></div>
+      </div>
+      <div id="production-tab" class="tab-pane">
+        <h2>Production Buildings</h2>
+        <div id="buildings"></div>
+      </div>
+      <div id="research-tab" class="tab-pane">
+        <h2>Research</h2>
+        <div id="research"></div>
+      </div>
+      <div id="market-tab" class="tab-pane">
+        <h2>Market</h2>
+        <div id="market"></div>
+      </div>
+      <div id="missions-tab" class="tab-pane">
+        <h2>Missions</h2>
+        <div id="missions"></div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

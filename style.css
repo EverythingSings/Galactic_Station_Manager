@@ -1,0 +1,110 @@
+html, body {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  user-select: none;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #0a0a2a;
+  color: #e0e0ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#game {
+  background-color: #1a1a4a;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 255, 0.3);
+  max-width: 800px;
+  width: 100%;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #00ffff;
+}
+
+#resources {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.resource {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5px;
+}
+
+.emoji {
+  font-size: 2em;
+  margin-bottom: 5px;
+}
+
+#actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.action-button, .upgrade-button, .tab-button, .building button, .research-item button, .market-item button, .mission button {
+  background-color: #4a4a8a;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.action-button:hover, .upgrade-button:hover, .tab-button:hover, .building button:hover, .research-item button:hover, .market-item button:hover, .mission button:hover {
+  background-color: #6a6aaa;
+}
+
+.action-button:disabled, .upgrade-button:disabled, .tab-button:disabled, .building button:disabled, .research-item button:disabled, .market-item button:disabled, .mission button:disabled {
+  background-color: #2a2a4a;
+  cursor: not-allowed;
+}
+
+#upgrades, #buildings, #research, #market, #missions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+#tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  border-radius: 5px 5px 0 0;
+}
+
+.tab-button.active {
+  background-color: #6a6aaa;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
