@@ -418,11 +418,12 @@ function activateTab(tabName) {
   document.getElementById(`${tabName}-tab`).classList.add('active');
 }
 
-// Load the game state when the game starts
+// Call setupTabs on window load
 window.onload = () => {
   loadGameState();
+  setupTabs();
   updateDisplay();
-}
+};
 
 // Called on page load to initiate routines
 setInterval(regenerateEnergy, 1000);

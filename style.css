@@ -109,6 +109,8 @@ h1, h2 {
 #tabs-container {
   overflow: hidden;
   white-space: nowrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #tabs {
@@ -117,7 +119,7 @@ h1, h2 {
 }
 
 .tab-button {
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   display: inline-block;
   padding: 10px 20px;
   margin: 0 5px;
