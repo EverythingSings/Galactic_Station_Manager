@@ -60,11 +60,21 @@ const upgradeEffects = {
   "Energy Efficiency": () => game.energyRegenRate++,
 };
 
-// Save the game state to localStorage
+// Additional map for mission check effects
+const missionEffects = {
+  "First Steps": () => game.minerals >= 1000,
+  "Gas Giant": () => game.gas >= 1000,
+  "Crystal Clear": () => game.crystals >= 500,
+  "Heavy Water": () => game.deuterium >= 250,
+  "Researcher": () => Object.values(game.research).some(level => level >= 5),
+};
+
+// Save the game state to localStorage, without functions
 function saveGameState() {
   const gameState = {
     ...game,
-    upgrades: game.upgrades.map(({ name, cost }) => ({ name, cost }))
+    upgrades: game.upgrades.map(({ name, cost }) => ({ name, cost })),
+    missions: game.missions.map(({ name, description, reward }) => ({ name, description, reward }))
   };
   localStorage.setItem('gameState', JSON.stringify(gameState));
 }
@@ -77,6 +87,9 @@ function loadGameState() {
     Object.assign(game, parsedState);
     parsedState.upgrades.forEach((upgrade, i) => {
       game.upgrades[i].effect = upgradeEffects[upgrade.name];
+    });
+    parsedState.missions.forEach((mission, i) => {
+      game.missions[i].check = missionEffects[mission.name];
     });
   }
 }
@@ -304,7 +317,7 @@ function updateMarket() {
     const div = document.createElement('div');
     div.className = 'market-item';
     div.innerHTML = `
-      ${formatResourceName(resource)}: ${price.toFixed(2)} credits
+      ${formatResourceName(resource)}: ${(price.toFixed(2))} credits
       <button onclick="buyResource('${resource}')">Buy</button>
       <button onclick="sellResource('${resource}')">Sell</button>
     `;
@@ -430,6 +443,3 @@ setInterval(regenerateEnergy, 1000);
 setInterval(produceResources, 1000);
 setupTabs();
 updateDisplay();
-
-// Optionally, create a button for resetting the game state
-document.getElementById('tabs').innerHTML += '<button class="tab-button" onclick="clearGameState()">Reset Game</button>';
