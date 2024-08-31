@@ -2,8 +2,6 @@ import { game } from "./gameState.js";
 import {
   canAfford,
   buyUpgrade,
-  buildStructure,
-  conductResearch,
   getResearchCost,
 } from "./gameHelpers.js";
 import { canMine, canExtract } from "./script.js";
@@ -158,20 +156,41 @@ function updateMarket() {
   try {
     const marketDiv = document.getElementById("market");
     marketDiv.innerHTML = "";
-    Object.entries(game.marketPrices).forEach(([resource, price]) => {
-      const buyDisabled = game.credits < price * 10;
-      const sellDisabled = game[resource] < 10;
-      marketDiv.innerHTML += `
-        <div class="market-item">
-          <strong>${formatResourceName(resource)}: ${price.toFixed(2)} credits</strong>
-          <button class="purchase-button" onclick="buyResource('${resource}')" ${buyDisabled ? "disabled" : ""}>
-            <div class="button-content">Buy</div>
+
+    if (!game.marketUnlocked) {
+      const unlockCost = {
+        minerals: 500,
+        gas: 250,
+        energy: 1000
+      };
+      const costText = Object.entries(unlockCost)
+        .map(([resource, amount]) => `${amount} ${resource}`)
+        .join(", ");
+      marketDiv.innerHTML = `
+        <div class="market-unlock">
+          <h3>Unlock Galactic Market</h3>
+          <p>Cost: ${costText}</p>
+          <button class="purchase-button" onclick="unlockMarket()" ${canUnlockMarket() ? "" : "disabled"}>
+            <div class="button-content">Unlock Market</div>
           </button>
-          <button class="purchase-button" onclick="sellResource('${resource}')" ${sellDisabled ? "disabled" : ""}>
-            <div class="button-content">Sell</div>
-          </button>
-        </div>`;
-    });
+        </div>
+      `;
+    } else {
+      Object.entries(game.marketPrices).forEach(([resource, price]) => {
+        const buyDisabled = game.credits < price * 10;
+        const sellDisabled = game[resource] < 10;
+        marketDiv.innerHTML += `
+          <div class="market-item">
+            <strong>${formatResourceName(resource)}: ${price.toFixed(2)} credits</strong>
+            <button class="purchase-button" onclick="buyResource('${resource}')" ${buyDisabled ? "disabled" : ""}>
+              <div class="button-content">Buy</div>
+            </button>
+            <button class="purchase-button" onclick="sellResource('${resource}')" ${sellDisabled ? "disabled" : ""}>
+              <div class="button-content">Sell</div>
+            </button>
+          </div>`;
+      });
+    }
   } catch (error) {
     console.error("Error updating market:", error);
   }

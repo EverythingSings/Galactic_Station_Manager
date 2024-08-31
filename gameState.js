@@ -12,6 +12,7 @@ const game = {
   mineralPower: 1,
   gasPower: 1,
   role: "Novice Commander",
+  marketUnlocked: false,
   upgrades: [
     {
       name: "Advanced Mining Drill",

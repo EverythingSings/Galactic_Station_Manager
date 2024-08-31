@@ -219,6 +219,11 @@ export function canExtract() {
 
 
 export function buyResource(resource, amount = 10) {
+  if (!game.marketUnlocked) {
+    console.log("Market is not unlocked yet!");
+    return;
+  }
+
   const cost = game.marketPrices[resource] * amount;
   console.log(`Attempting to buy ${amount} ${resource} for ${cost} credits. Current credits: ${game.credits}`);
 
@@ -233,6 +238,11 @@ export function buyResource(resource, amount = 10) {
 }
 
 export function sellResource(resource, amount = 10) {
+  if (!game.marketUnlocked) {
+    console.log("Market is not unlocked yet!");
+    return;
+  }
+
   console.log(`Attempting to sell ${amount} ${resource}. Current amount: ${game[resource]}`);
   const availableAmount = Math.min(game[resource], amount);
   if (availableAmount > 0) {
@@ -253,8 +263,36 @@ export function checkMission(index) {
   }
 }
 
+export function canUnlockMarket() {
+  const unlockCost = {
+    minerals: 500,
+    gas: 250,
+    energy: 1000
+  };
+  return canAfford(unlockCost);
+}
+
+export function unlockMarket() {
+  const unlockCost = {
+    minerals: 500,
+    gas: 250,
+    energy: 1000
+  };
+  if (canUnlockMarket()) {
+    Object.entries(unlockCost).forEach(([resource, amount]) => {
+      game[resource] -= amount;
+    });
+    game.marketUnlocked = true;
+    saveGameState();
+  }
+}
+
+
+
 window.buildStructure = buildStructure;
 window.buyResource = buyResource;
 window.sellResource = sellResource;
+window.unlockMarket = unlockMarket;
+window.canUnlockMarket = canUnlockMarket;
 
 

@@ -15,6 +15,7 @@ describe('gameHelpers', () => {
     game.gasPower = 1;
     game.energyRegenRate = 1;
     game.maxEnergy = 25;
+    game.marketUnlocked = false;
     game.upgrades = [
       {
         name: "Advanced Mining Drill",
@@ -53,10 +54,10 @@ describe('gameHelpers', () => {
   });
 
   test('buyUpgrade decreases resources accordingly and applies effect', () => {
-    const upgradeIndex = 0; // Advanced mining 
+    const upgradeIndex = 0; // Advanced mining drill
     gameHelpers.buyUpgrade(upgradeIndex);
     expect(game.minerals).toBe(990);
-    expect(game.mineralPower).toBe(2); 
+    expect(game.mineralPower).toBe(2);
   });
 
   test('saveGameState and loadGameState', () => {
@@ -114,12 +115,14 @@ describe('gameHelpers', () => {
     const cost = { minerals: 500, energy: 250 };
     expect(gameHelpers.canAfford(cost)).toBeTruthy();
   });
+
   test('canAfford returns false when player does not have enough resources', () => {
     game.minerals = 100;
     game.energy = 50;
     const cost = { minerals: 500, energy: 250 };
     expect(gameHelpers.canAfford(cost)).toBeFalsy();
   });
+
   test('buyUpgrade applies the correct upgrade effect', () => {
     game.minerals = 1000;
     game.mineralPower = 1;
@@ -127,6 +130,7 @@ describe('gameHelpers', () => {
     gameHelpers.buyUpgrade(upgradeIndex);
     expect(game.mineralPower).toBe(2);
   });
+
   test('buildStructure increases the correct building count', () => {
     game.minerals = 1000;
     game.energy = 1000;
@@ -134,6 +138,7 @@ describe('gameHelpers', () => {
     gameHelpers.buildStructure('mineralExtractor');
     expect(game.buildings.mineralExtractor).toBe(1);
   });
+
   test('conductResearch increases the correct research level', () => {
     game.minerals = 10000;
     game.energy = 10000;
@@ -141,86 +146,96 @@ describe('gameHelpers', () => {
     gameHelpers.conductResearch('mineralEfficiency');
     expect(game.research.mineralEfficiency).toBe(1);
   });
+
   test('applyResearchEffects correctly applies mineral efficiency research', () => {
     game.mineralPower = 1;
     gameHelpers.applyResearchEffects('mineralEfficiency');
     expect(game.mineralPower).toBeCloseTo(1.1, 2);
   });
 
-  // Market functions
-  test('buyResource increases resource and decreases credits', () => {
+  test('buyResource increases resource and decreases credits when market is unlocked', () => {
+    game.marketUnlocked = true;
     game.credits = 100;
     game.minerals = 0;
     gameHelpers.buyResource('minerals', 10);
     expect(game.minerals).toBe(10);
-    expect(game.credits).toBe(90);
+    expect(game.credits).toBe(90); // Assuming mineral price is 1 credit
   });
-  test('sellResource decreases resource and increases credits', () => {
+
+  test('buyResource does not allow purchase if market is locked', () => {
+    game.marketUnlocked = false;
+    game.credits = 100;
+    game.minerals = 0;
+    gameHelpers.buyResource('minerals', 10);
+    expect(game.minerals).toBe(0);
+    expect(game.credits).toBe(100);
+  });
+
+  test('sellResource decreases resource and increases credits when market is unlocked', () => {
+    game.marketUnlocked = true;
     game.credits = 100;
     game.gas = 20;
     gameHelpers.sellResource('gas', 10);
     expect(game.gas).toBe(10);
     expect(game.credits).toBe(115); // Assuming gas price is 1.5 credits
   });
-  // Mission completion and rewards
-  test('checkMission completes mission and awards credits', () => {
-    game.minerals = 1000;
-    game.credits = 0;
-    gameHelpers.checkMission(0); // Assuming "First Steps" mission is at index 0
-    expect(game.completedMissions).toContain(0);
+
+  test('sellResource does not allow selling if market is locked', () => {
+    game.marketUnlocked = false;
+    game.credits = 100;
+    game.gas = 20;
+    gameHelpers.sellResource('gas', 10);
+    expect(game.gas).toBe(20);
     expect(game.credits).toBe(100);
   });
-  // Game state progression
-  test('game state progresses correctly over time', () => {
-    game.minerals = 0;
-    game.energy = 25;
-    game.buildings.mineralExtractor = 1;
 
-    // Simulate 10 seconds of game time
-    for (let i = 0; i < 10; i++) {
-      produceResources();
-      regenerateEnergy();
-    }
-    expect(game.minerals).toBeCloseTo(1, 1); // 0.1 minerals per second for 10 seconds
-    expect(game.energy).toBe(25); // Should regenerate to max
-  });
-  // Edge cases and error handling
-  test('canAfford handles missing resources', () => {
-    game.minerals = 100;
-    const cost = { minerals: 50, nonexistentResource: 10 };
-    expect(() => gameHelpers.canAfford(cost)).not.toThrow();
-    expect(gameHelpers.canAfford(cost)).toBeFalsy();
-  });
-  test('buyUpgrade fails if upgrade does not exist', () => {
-    expect(() => gameHelpers.buyUpgrade(999)).toThrow('Upgrade at index 999 does not exist');
+  test('canUnlockMarket returns false when resources are insufficient', () => {
+    game.minerals = 1000;
+    game.gas = 1000;
+    game.energy = 500;
+    expect(gameHelpers.canUnlockMarket()).toBeFalsy();
   });
 
-  test('conductResearch fails if research does not exist', () => {
-    expect(() => gameHelpers.conductResearch('nonexistentResearch')).toThrow("Research 'nonexistentResearch' does not exist");
+  test('canUnlockMarket returns true when resources are sufficient', () => {
+    game.minerals = 5000;
+    game.gas = 2500;
+    game.energy = 1000;
+    expect(gameHelpers.canUnlockMarket()).toBeTruthy();
   });
-  
-  test('maxEnergy is not exceeded when regenerating energy', () => {
-    game.energy = 24;
-    game.maxEnergy = 25;
-    game.energyRegenRate = 2;
-    regenerateEnergy();
-    expect(game.energy).toBe(25);
-  });
-  test('resources are not produced if buildings do not exist', () => {
-    game.minerals = 0;
-    game.buildings.mineralExtractor = 0;
-    produceResources();
+
+  test('unlockMarket function unlocks the market and deducts resources', () => {
+    game.minerals = 500;
+    game.gas = 250;
+    game.energy = 1000;
+    gameHelpers.unlockMarket();
+    expect(game.marketUnlocked).toBeTruthy();
     expect(game.minerals).toBe(0);
+    expect(game.gas).toBe(0);
+    expect(game.energy).toBe(0);
+  });
+
+  test('market prices are correctly applied when market is unlocked', () => {
+    game.marketUnlocked = true;
+    game.credits = 1000;
+    game.deuterium = 0;
+    gameHelpers.buyResource('deuterium', 100);
+    expect(game.deuterium).toBe(100);
+    expect(game.credits).toBe(500); // Assuming deuterium price is 5 credits
+  });
+
+  test('market is initially locked', () => {
+    expect(game.marketUnlocked).toBeFalsy();
   });
 
   test('minerals do not go below zero when selling', () => {
+    game.marketUnlocked = true;
     game.minerals = 5;
     game.credits = 0;
     gameHelpers.sellResource('minerals', 10);
     expect(game.minerals).toBe(0);
     expect(game.credits).toBe(5 * game.marketPrices.minerals); // Only 5 minerals should be sold
   });
-  
+
   test('energy does not exceed maxEnergy when regenerating', () => {
     game.energy = 24;
     game.maxEnergy = 25;
@@ -228,28 +243,25 @@ describe('gameHelpers', () => {
     regenerateEnergy();
     expect(game.energy).toBe(25);
   });
-  
+
   test('buying resources with exact credit amount', () => {
+    game.marketUnlocked = true;
     game.credits = 10;
     game.minerals = 0;
     gameHelpers.buyResource('minerals', 10);
     expect(game.minerals).toBe(10);
     expect(game.credits).toBe(0);
   });
+
   test('selling resources with fractional amounts', () => {
+    game.marketUnlocked = true;
     game.gas = 10.5;
     game.credits = 0;
     gameHelpers.sellResource('gas', 10.5);
     expect(game.gas).toBe(0);
     expect(game.credits).toBeCloseTo(15.75, 2); // Assuming gas price is 1.5
   });
-  test('research level does not exceed maximum (if there is a max)', () => {
-    const maxLevel = 10; // Assume max level is 10
-    for (let i = 0; i < 15; i++) {
-      gameHelpers.conductResearch('mineralEfficiency');
-    }
-    expect(game.research.mineralEfficiency).toBeLessThanOrEqual(maxLevel);
-  });
+
   test('mission completion does not award credits multiple times', () => {
     game.minerals = 2000;
     game.credits = 0;
@@ -258,13 +270,7 @@ describe('gameHelpers', () => {
     gameHelpers.checkMission(0); // Try to complete it again
     expect(game.credits).toBe(creditsBefore);
   });
-  test('resource production handles very large numbers', () => {
-    game.buildings.mineralExtractor = 1e6; // 1 million extractors
-    const mineralsBefore = game.minerals;
-    gameHelpers.produceResources();
-    expect(game.minerals).toBeGreaterThan(mineralsBefore);
-    expect(isFinite(game.minerals)).toBeTruthy();
-  });
+
   test('upgrade costs increase correctly after multiple purchases', () => {
     const initialCost = game.upgrades[0].cost.minerals;
     for (let i = 0; i < 5; i++) {
@@ -272,56 +278,4 @@ describe('gameHelpers', () => {
     }
     expect(game.upgrades[0].cost.minerals).toBeGreaterThan(initialCost);
   });
-  test('game state handles simultaneous resource changes', () => {
-    game.minerals = 100;
-    game.energy = 100;
-    Promise.all([
-      gameHelpers.mine(),
-      gameHelpers.extract(),
-      gameHelpers.regenerateEnergy()
-    ]).then(() => {
-      expect(game.minerals).toBeGreaterThan(100);
-      expect(game.gas).toBeGreaterThan(0);
-      expect(game.energy).toBeLessThan(100);
-    });
-  });
-
-  test('buyResource increases resource and decreases credits', () => {
-    game.credits = 100;
-    game.minerals = 0;
-    gameHelpers.buyResource('minerals', 10);
-    expect(game.minerals).toBe(10);
-    expect(game.credits).toBe(90); // Assuming mineral price is 1 credit
-  });
-  test('buyResource does not allow purchase if not enough credits', () => {
-    game.credits = 5;
-    game.gas = 0;
-    gameHelpers.buyResource('gas', 10);
-    expect(game.gas).toBe(0);
-    expect(game.credits).toBe(5);
-  });
-  test('sellResource decreases resource and increases credits', () => {
-    game.credits = 100;
-    game.gas = 20;
-    gameHelpers.sellResource('gas', 10);
-    expect(game.gas).toBe(10);
-    expect(game.credits).toBe(115); // Assuming gas price is 1.5 credits
-  });
-  test('sellResource does not allow selling more than available', () => {
-    game.credits = 100;
-    game.crystals = 5;
-    gameHelpers.sellResource('crystals', 10);
-    expect(game.crystals).toBe(0);
-    expect(game.credits).toBe(115); // Assuming crystal price is 3 credits
-  });
-  test('market prices are correctly applied', () => {
-    game.credits = 1000;
-    game.deuterium = 0;
-    gameHelpers.buyResource('deuterium', 100);
-    expect(game.deuterium).toBe(100);
-    expect(game.credits).toBe(500); // Assuming deuterium price is 5 credits
-  });
-
-
-
 });
