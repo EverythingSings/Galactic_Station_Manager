@@ -45,7 +45,7 @@ body {
   padding: 20px;
   box-shadow: 0 0 20px var(--glow-effect-color);
   max-width: 800px;
-  width: 100%; /* Allow it to scale responsively */
+  width: 100%;
   box-sizing: border-box; /* Include padding and border in width calculation */
 }
 
@@ -81,7 +81,8 @@ h1, h2 {
   margin-bottom: 20px;
 }
 
-.action-button, .upgrade-button, .tab-button, .building button, .research-item button, .market-item button, .mission button {
+/* Consistent button styles */
+.action-button, .upgrade-button, .tab-button, .building button, .research-item button, .market-item button, .mission button, .purchase-button {
   background-color: var(--secondary-color);
   color: var(--tab-text-color);
   border: none;
@@ -91,13 +92,24 @@ h1, h2 {
   transition: background-color 0.3s;
 }
 
-.action-button:hover, .upgrade-button:hover, .tab-button:hover, .building button:hover, .research-item button:hover, .market-item button:hover, .mission button:hover {
+.action-button:hover, .upgrade-button:hover, .tab-button:hover, .building button:hover, .research-item button:hover, .market-item button:hover, .mission button:hover, .purchase-button:hover {
   background-color: var(--highlight-color);
 }
 
-.action-button:disabled, .upgrade-button:disabled, .tab-button:disabled, .building button:disabled, .research-item button:disabled, .market-item button:disabled, .mission button:disabled {
+.action-button:disabled, .upgrade-button:disabled, .tab-button:disabled, .building button:disabled, .research-item button:disabled, .market-item button:disabled, .mission button:disabled, .purchase-button:disabled {
   background-color: #2a2a4a;
   cursor: not-allowed;
+}
+
+/* Ensure uniform styling across these sections */
+.purchase-button {
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+  width: 100%;
 }
 
 #upgrades, #buildings, #research, #market, #missions {
