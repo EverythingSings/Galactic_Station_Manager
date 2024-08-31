@@ -15,7 +15,7 @@ const missionEffects = {
   Researcher: () => Object.values(game.research).some((level) => level >= 5),
 };
 
-function saveGameState() {
+export function saveGameState() {
   try {
     const gameState = {
       ...game,
@@ -32,7 +32,7 @@ function saveGameState() {
   }
 }
 
-function loadGameState() {
+export function loadGameState() {
   try {
     const savedState = localStorage.getItem("gameState");
     if (savedState) {
@@ -50,18 +50,18 @@ function loadGameState() {
   }
 }
 
-function clearGameState() {
+export function clearGameState() {
   localStorage.removeItem("gameState");
   location.reload();
 }
 
-function canAfford(cost) {
+export function canAfford(cost) {
   return Object.entries(cost).every(
     ([resource, amount]) => game[resource] >= amount,
   );
 }
 
-function buyUpgrade(index) {
+export function buyUpgrade(index) {
   try {
     const upgrade = game.upgrades[index];
     if (!upgrade) {
@@ -86,7 +86,7 @@ function buyUpgrade(index) {
   }
 }
 
-function buildStructure(building) {
+export function buildStructure(building) {
   try {
     const cost = getBuildingCost(building);
     if (canAfford(cost)) {
@@ -101,7 +101,7 @@ function buildStructure(building) {
   }
 }
 
-function getBuildingCost(building) {
+export function getBuildingCost(building) {
   const costs = {
     mineralExtractor: { minerals: 100, energy: 50 },
     gasRefinery: { minerals: 150, gas: 50, energy: 75 },
@@ -111,7 +111,7 @@ function getBuildingCost(building) {
   return costs[building];
 }
 
-function conductResearch(tech) {
+export function conductResearch(tech) {
   try {
     if (!game.research.hasOwnProperty(tech)) {
       throw new Error(`Research '${tech}' does not exist`);
@@ -132,7 +132,7 @@ function conductResearch(tech) {
 }
 
 
-function getResearchCost(tech) {
+export function getResearchCost(tech) {
   const baseCosts = {
     mineralEfficiency: { minerals: 1000, energy: 500 },
     gasEfficiency: { gas: 1000, energy: 500 },
@@ -150,7 +150,7 @@ function getResearchCost(tech) {
   );
 }
 
-function applyResearchEffects(tech) {
+export function applyResearchEffects(tech) {
   switch (tech) {
     case "mineralEfficiency":
       game.mineralPower *= 1.1;
@@ -171,6 +171,53 @@ function applyResearchEffects(tech) {
   }
 }
 
+export function produceResources() {
+  try {
+    game.minerals += game.buildings.mineralExtractor * 0.1;
+    game.gas += game.buildings.gasRefinery * 0.1;
+    game.crystals += game.buildings.crystalSynthesizer * 0.05;
+    game.deuterium += game.buildings.deuteriumCollector * 0.01;
+    saveGameState();
+  } catch (error) {
+    console.error("Error producing resources:", error);
+  }
+}
+
+export function mine() {
+  if (canMine()) {
+    game.minerals += game.mineralPower;
+    game.energy--;
+    saveGameState();
+  }
+}
+
+export function extract() {
+  if (canExtract()) {
+    game.gas += game.gasPower;
+    game.energy--;
+    saveGameState();
+  }
+}
+
+export function regenerateEnergy() {
+  try {
+    game.energy = Math.min(game.energy + game.energyRegenRate, game.maxEnergy);
+    saveGameState();
+  } catch (error) {
+    console.error("Error regenerating energy:", error);
+  }
+}
+
+export function canMine() {
+  return game.energy >= 1;
+}
+
+export function canExtract() {
+  return game.energy >= 1;
+}
+
+
+
 export function buyResource(resource, amount) {
   const cost = game.marketPrices[resource] * amount;
   if (game.credits >= cost) {
@@ -180,9 +227,10 @@ export function buyResource(resource, amount) {
 }
 
 export function sellResource(resource, amount) {
-  if (game[resource] >= amount) {
-    game[resource] -= amount;
-    game.credits += game.marketPrices[resource] * amount;
+  const availableAmount = Math.min(game[resource], amount);
+  if (availableAmount > 0) {
+    game[resource] -= availableAmount;
+    game.credits += game.marketPrices[resource] * availableAmount;
   }
 }
 
@@ -194,15 +242,8 @@ export function checkMission(index) {
   }
 }
 
-export {
-  saveGameState,
-  loadGameState,
-  clearGameState,
-  canAfford,
-  buyUpgrade,
-  buildStructure,
-  conductResearch,
-  getBuildingCost,
-  getResearchCost,
-  applyResearchEffects,
-};
+window.buildStructure = buildStructure;
+window.buyResource = buyResource;
+window.sellResource = sellResource;
+
+

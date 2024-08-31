@@ -7,6 +7,11 @@ import {
   updateDisplay,
   setupTabs,
 } from "./uiHelpers.js";
+import { buildStructure, buyResource, sellResource } from './gameHelpers.js';
+
+window.buildStructure = buildStructure;
+window.buyResource = buyResource;
+window.sellResource = sellResource;
 
 function setupEventListeners() {
   document.getElementById("mineMinerals").addEventListener("click", mine);

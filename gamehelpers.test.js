@@ -213,6 +213,78 @@ describe('gameHelpers', () => {
     expect(game.minerals).toBe(0);
   });
 
+  test('minerals do not go below zero when selling', () => {
+    game.minerals = 5;
+    game.credits = 0;
+    gameHelpers.sellResource('minerals', 10);
+    expect(game.minerals).toBe(0);
+    expect(game.credits).toBe(5 * game.marketPrices.minerals); // Only 5 minerals should be sold
+  });
+  
+  test('energy does not exceed maxEnergy when regenerating', () => {
+    game.energy = 24;
+    game.maxEnergy = 25;
+    game.energyRegenRate = 5;
+    regenerateEnergy();
+    expect(game.energy).toBe(25);
+  });
+  
+  test('buying resources with exact credit amount', () => {
+    game.credits = 10;
+    game.minerals = 0;
+    gameHelpers.buyResource('minerals', 10);
+    expect(game.minerals).toBe(10);
+    expect(game.credits).toBe(0);
+  });
+  test('selling resources with fractional amounts', () => {
+    game.gas = 10.5;
+    game.credits = 0;
+    gameHelpers.sellResource('gas', 10.5);
+    expect(game.gas).toBe(0);
+    expect(game.credits).toBeCloseTo(15.75, 2); // Assuming gas price is 1.5
+  });
+  test('research level does not exceed maximum (if there is a max)', () => {
+    const maxLevel = 10; // Assume max level is 10
+    for (let i = 0; i < 15; i++) {
+      gameHelpers.conductResearch('mineralEfficiency');
+    }
+    expect(game.research.mineralEfficiency).toBeLessThanOrEqual(maxLevel);
+  });
+  test('mission completion does not award credits multiple times', () => {
+    game.minerals = 2000;
+    game.credits = 0;
+    gameHelpers.checkMission(0); // Complete "First Steps" mission
+    const creditsBefore = game.credits;
+    gameHelpers.checkMission(0); // Try to complete it again
+    expect(game.credits).toBe(creditsBefore);
+  });
+  test('resource production handles very large numbers', () => {
+    game.buildings.mineralExtractor = 1e6; // 1 million extractors
+    const mineralsBefore = game.minerals;
+    gameHelpers.produceResources();
+    expect(game.minerals).toBeGreaterThan(mineralsBefore);
+    expect(isFinite(game.minerals)).toBeTruthy();
+  });
+  test('upgrade costs increase correctly after multiple purchases', () => {
+    const initialCost = game.upgrades[0].cost.minerals;
+    for (let i = 0; i < 5; i++) {
+      gameHelpers.buyUpgrade(0);
+    }
+    expect(game.upgrades[0].cost.minerals).toBeGreaterThan(initialCost);
+  });
+  test('game state handles simultaneous resource changes', () => {
+    game.minerals = 100;
+    game.energy = 100;
+    Promise.all([
+      gameHelpers.mine(),
+      gameHelpers.extract(),
+      gameHelpers.regenerateEnergy()
+    ]).then(() => {
+      expect(game.minerals).toBeGreaterThan(100);
+      expect(game.gas).toBeGreaterThan(0);
+      expect(game.energy).toBeLessThan(100);
+    });
+  });
 
 
 });

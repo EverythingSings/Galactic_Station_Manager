@@ -69,7 +69,7 @@ function updateUpgrades() {
       const costText = Object.entries(upgrade.cost)
         .map(([resource, amount]) => `${amount} ${resource}`)
         .join(", ");
-      button.innerHTML = `<div class="button-content"><strong>${upgrade.name}</strong><span>Cost: ${costText}</span></div>`;
+      button.innerHTML = `<div class="button-content"><strong>${upgrade.name}</strong><span>(${costText})</span></div>`;
       button.disabled = !canAfford(upgrade.cost);
       button.onclick = () => buyUpgrade(index);
       upgradesDiv.appendChild(button);
@@ -94,7 +94,7 @@ function updateBuildings() {
         <div>
           <strong>${formatBuildingName(building)}: ${count}</strong>
           <button class="purchase-button" onclick="buildStructure('${building}')" ${canAfford(cost) ? "" : "disabled"}>
-            <div class="button-content">Cost: ${costText}</div>
+            <div class="button-content">(${costText})</div>
           </button>
         </div>`;
       buildingsDiv.appendChild(div);
@@ -135,7 +135,7 @@ function updateResearch() {
         <div>
           <strong>${formatResearchName(tech)}: Level ${level}</strong>
           <button class="purchase-button" onclick="conductResearch('${tech}')" ${canAfford(cost) ? "" : "disabled"}>
-            <div class="button-content">Cost: ${costText}</div>
+            <div class="button-content">(${costText})</div>
           </button>
         </div>`;
       researchDiv.appendChild(div);
