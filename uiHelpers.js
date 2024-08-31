@@ -23,11 +23,14 @@ function updateDisplay() {
       const element = document.getElementById(resource);
       if (!element) {
         console.error(`Element with id ${resource} not found`);
-        return; // Continue to the next iteration
+        return;
       }
-      element.textContent = Math.floor(game[resource]);
+      element.innerHTML = `
+        ${Math.floor(game[resource])}
+        <span class="info-icon" onclick="showResourceInfo('${resource}')">ℹ️</span>
+      `;
     });
-
+    
     const roleElement = document.getElementById("role");
     if (!roleElement) {
       console.error("Element with id 'role' not found");
@@ -220,6 +223,38 @@ function activateTab(tabName) {
   document.querySelector(`[data-tab=${tabName}]`).classList.add("active");
 }
 
+function showResourceInfo(resource) {
+  const description = getResourceDescription(resource);
+  showModal(resource.charAt(0).toUpperCase() + resource.slice(1), description);
+}
+
+function showModal(title, content) {
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h2>${title}</h2>
+      <p>${content}</p>
+      <button onclick="this.closest('.modal').remove()">Close</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function getResourceDescription(resource) {
+  const descriptions = {
+    minerals: "Basic building material for your space station.",
+    gas: "Fuel for advanced technologies and operations.",
+    crystals: "Used in high-tech equipment and research.",
+    deuterium: "Powers fusion reactors and advanced propulsion systems.",
+    energy: "Powers your station and all activities.",
+    credits: "Used to trade and procure essential items in the market."
+  };
+  return descriptions[resource] || "No description available.";
+}
+
+window.showResourceInfo = showResourceInfo;
+
 export {
   updateDisplay,
   updateUpgrades,
@@ -229,4 +264,6 @@ export {
   updateMissions,
   setupTabs,
   activateTab,
+  showResourceInfo,
+  showModal
 };

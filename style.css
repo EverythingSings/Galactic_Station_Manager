@@ -208,3 +208,29 @@ h1, h2 {
   justify-content: center;
   text-align: center;
 }
+
+.info-icon {
+  font-size: 0.8em;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 80%;
+}
