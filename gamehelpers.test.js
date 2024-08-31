@@ -286,5 +286,42 @@ describe('gameHelpers', () => {
     });
   });
 
+  test('buyResource increases resource and decreases credits', () => {
+    game.credits = 100;
+    game.minerals = 0;
+    gameHelpers.buyResource('minerals', 10);
+    expect(game.minerals).toBe(10);
+    expect(game.credits).toBe(90); // Assuming mineral price is 1 credit
+  });
+  test('buyResource does not allow purchase if not enough credits', () => {
+    game.credits = 5;
+    game.gas = 0;
+    gameHelpers.buyResource('gas', 10);
+    expect(game.gas).toBe(0);
+    expect(game.credits).toBe(5);
+  });
+  test('sellResource decreases resource and increases credits', () => {
+    game.credits = 100;
+    game.gas = 20;
+    gameHelpers.sellResource('gas', 10);
+    expect(game.gas).toBe(10);
+    expect(game.credits).toBe(115); // Assuming gas price is 1.5 credits
+  });
+  test('sellResource does not allow selling more than available', () => {
+    game.credits = 100;
+    game.crystals = 5;
+    gameHelpers.sellResource('crystals', 10);
+    expect(game.crystals).toBe(0);
+    expect(game.credits).toBe(115); // Assuming crystal price is 3 credits
+  });
+  test('market prices are correctly applied', () => {
+    game.credits = 1000;
+    game.deuterium = 0;
+    gameHelpers.buyResource('deuterium', 100);
+    expect(game.deuterium).toBe(100);
+    expect(game.credits).toBe(500); // Assuming deuterium price is 5 credits
+  });
+
+
 
 });

@@ -218,22 +218,33 @@ export function canExtract() {
 
 
 
-export function buyResource(resource, amount) {
+export function buyResource(resource, amount = 10) {
   const cost = game.marketPrices[resource] * amount;
+  console.log(`Attempting to buy ${amount} ${resource} for ${cost} credits. Current credits: ${game.credits}`);
+
   if (game.credits >= cost) {
     game.credits -= cost;
     game[resource] += amount;
+    console.log(`Successfully bought ${amount} ${resource} for ${cost} credits. New balance: ${game.credits} credits, ${game[resource]} ${resource}`);
+    saveGameState();
+  } else {
+    console.log(`Not enough credits to buy ${amount} ${resource}. Required: ${cost}, Available: ${game.credits}`);
   }
 }
 
-export function sellResource(resource, amount) {
+export function sellResource(resource, amount = 10) {
+  console.log(`Attempting to sell ${amount} ${resource}. Current amount: ${game[resource]}`);
   const availableAmount = Math.min(game[resource], amount);
   if (availableAmount > 0) {
     game[resource] -= availableAmount;
-    game.credits += game.marketPrices[resource] * availableAmount;
+    const earnings = game.marketPrices[resource] * availableAmount;
+    game.credits += earnings;
+    console.log(`Sold ${availableAmount} ${resource} for ${earnings} credits`);
+    saveGameState();
+  } else {
+    console.log(`Not enough ${resource} to sell. Current amount: ${game[resource]}`);
   }
 }
-
 export function checkMission(index) {
   const mission = game.missions[index];
   if (mission.check() && !game.completedMissions.includes(index)) {
