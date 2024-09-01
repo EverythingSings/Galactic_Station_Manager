@@ -1,31 +1,28 @@
 import { game } from "./gameState.js";
-import {
-  canAfford,
-  buyUpgrade,
-  getResearchCost,
-} from "./gameHelpers.js";
+import { changelog } from "./changelog.js";
+import { canAfford, buyUpgrade, getResearchCost } from "./gameHelpers.js";
 import { canMine, canExtract } from "./script.js";
 
-    function updateDisplay() {
-      try {
-        const resources = [
-          "minerals",
-          "gas",
-          "crystals",
-          "deuterium",
-          "energy",
-          "credits",
-        ];
-        resources.forEach((resource) => {
-          const element = document.getElementById(resource);
-          if (element) {
-            element.innerHTML = `
+function updateDisplay() {
+  try {
+    const resources = [
+      "minerals",
+      "gas",
+      "crystals",
+      "deuterium",
+      "energy",
+      "credits",
+    ];
+    resources.forEach((resource) => {
+      const element = document.getElementById(resource);
+      if (element) {
+        element.innerHTML = `
               <span class="resource-value">${Math.floor(game[resource])}</span>
               <span class="info-icon" onclick="showResourceInfo('${resource}')">ℹ️</span>
             `;
-          }
-        });
-    
+      }
+    });
+
     const roleElement = document.getElementById("role");
     if (!roleElement) {
       console.error("Element with id 'role' not found");
@@ -46,6 +43,8 @@ import { canMine, canExtract } from "./script.js";
       return;
     }
     extractGasBtn.disabled = !canExtract();
+
+    document.querySelector('h1').textContent = `Galactic Station Manager v${game.version}`;
 
     updateUpgrades();
     updateBuildings();
@@ -158,7 +157,7 @@ function updateMarket() {
       const unlockCost = {
         minerals: 500,
         gas: 250,
-        energy: 1000
+        energy: 1000,
       };
       const costText = Object.entries(unlockCost)
         .map(([resource, amount]) => `${amount} ${resource}`)
@@ -245,8 +244,8 @@ function showResourceInfo(resource) {
 }
 
 function showModal(title, content) {
-  const modal = document.createElement('div');
-  modal.className = 'modal';
+  const modal = document.createElement("div");
+  modal.className = "modal";
   modal.innerHTML = `
     <div class="modal-content">
       <h2>${title}</h2>
@@ -264,10 +263,21 @@ function getResourceDescription(resource) {
     crystals: "Used in high-tech equipment and research.",
     deuterium: "Powers fusion reactors and advanced propulsion systems.",
     energy: "Powers your station and all activities.",
-    credits: "Used to trade and procure essential items in the market."
+    credits: "Used to trade and procure essential items in the market.",
   };
   return descriptions[resource] || "No description available.";
 }
+
+export function updateChangelog() {
+  const changelogContent = document.getElementById('changelog-content');
+  changelogContent.innerHTML = changelog.map(entry => `
+    <h3>Version ${entry.version} (${entry.date})</h3>
+    <ul>
+      ${entry.changes.map(change => `<li>${change}</li>`).join('')}
+    </ul>
+  `).join('');
+}
+
 
 window.showResourceInfo = showResourceInfo;
 
@@ -281,5 +291,5 @@ export {
   setupTabs,
   activateTab,
   showResourceInfo,
-  showModal
+  showModal,
 };

@@ -1,6 +1,6 @@
 import { game } from "./gameState.js";
 import { saveGameState, loadGameState } from "./gameHelpers.js";
-import { updateDisplay, setupTabs } from "./uiHelpers.js";
+import { updateDisplay, setupTabs, updateChangelog } from "./uiHelpers.js";
 import { buildStructure, buyResource, sellResource } from "./gameHelpers.js";
 
 window.buildStructure = buildStructure;
@@ -98,6 +98,7 @@ window.onload = () => {
   setupTabs();
   updateDisplay();
   setupEventListeners();
+  updateChangelog();
 };
 
 setInterval(regenerateEnergy, 1000);

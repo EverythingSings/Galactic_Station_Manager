@@ -1,6 +1,7 @@
 // gameState.js
 
 const game = {
+  version: "0.1.0-beta",
   minerals: 0,
   gas: 0,
   crystals: 0,
