@@ -6,28 +6,25 @@ import {
 } from "./gameHelpers.js";
 import { canMine, canExtract } from "./script.js";
 
-function updateDisplay() {
-  try {
-    const resources = [
-      "minerals",
-      "gas",
-      "crystals",
-      "deuterium",
-      "energy",
-      "credits",
-    ];
-
-    resources.forEach((resource) => {
-      const element = document.getElementById(resource);
-      if (!element) {
-        console.error(`Element with id ${resource} not found`);
-        return;
-      }
-      element.innerHTML = `
-        ${Math.floor(game[resource])}
-        <span class="info-icon" onclick="showResourceInfo('${resource}')">ℹ️</span>
-      `;
-    });
+    function updateDisplay() {
+      try {
+        const resources = [
+          "minerals",
+          "gas",
+          "crystals",
+          "deuterium",
+          "energy",
+          "credits",
+        ];
+        resources.forEach((resource) => {
+          const element = document.getElementById(resource);
+          if (element) {
+            element.innerHTML = `
+              <span class="resource-value">${Math.floor(game[resource])}</span>
+              <span class="info-icon" onclick="showResourceInfo('${resource}')">ℹ️</span>
+            `;
+          }
+        });
     
     const roleElement = document.getElementById("role");
     if (!roleElement) {

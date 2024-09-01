@@ -1,13 +1,7 @@
 import { game } from "./gameState.js";
-import {
-  saveGameState,
-  loadGameState,
-} from "./gameHelpers.js";
-import {
-  updateDisplay,
-  setupTabs,
-} from "./uiHelpers.js";
-import { buildStructure, buyResource, sellResource } from './gameHelpers.js';
+import { saveGameState, loadGameState } from "./gameHelpers.js";
+import { updateDisplay, setupTabs } from "./uiHelpers.js";
+import { buildStructure, buyResource, sellResource } from "./gameHelpers.js";
 
 window.buildStructure = buildStructure;
 window.buyResource = buyResource;
@@ -17,8 +11,12 @@ function setupEventListeners() {
   document.getElementById("mineMinerals").addEventListener("click", mine);
   document.getElementById("extractGas").addEventListener("click", extract);
 
-  document.getElementById("viewCrystals").addEventListener("click", viewCrystals);
-  document.getElementById("viewDeuterium").addEventListener("click", viewDeuterium);
+  document
+    .getElementById("viewCrystals")
+    .addEventListener("click", viewCrystals);
+  document
+    .getElementById("viewDeuterium")
+    .addEventListener("click", viewDeuterium);
   document.getElementById("viewEnergy").addEventListener("click", viewEnergy);
   document.getElementById("viewCredits").addEventListener("click", viewCredits);
 }
@@ -29,6 +27,7 @@ function mine() {
   game.energy--;
   saveGameState();
   updateDisplay();
+  animateResourceGeneration("minerals");
 }
 
 function canMine() {
@@ -41,11 +40,19 @@ function extract() {
   game.energy--;
   saveGameState();
   updateDisplay();
+  animateResourceGeneration("gas");
 }
 
 function canExtract() {
   return game.energy >= 1;
 }
+
+function animateResourceGeneration(resourceId) {
+  const resourceElement = document.getElementById(resourceId);
+  resourceElement.classList.add('resource-pulse');
+  setTimeout(() => resourceElement.classList.remove('resource-pulse'), 500);
+}
+
 
 function viewCrystals() {
   alert(`You have ${game.crystals} crystals.`);
@@ -96,4 +103,12 @@ window.onload = () => {
 setInterval(regenerateEnergy, 1000);
 setInterval(produceResources, 1000);
 
-export { canMine, canExtract, setupEventListeners, mine, extract, regenerateEnergy, produceResources };
+export {
+  canMine,
+  canExtract,
+  setupEventListeners,
+  mine,
+  extract,
+  regenerateEnergy,
+  produceResources,
+};
