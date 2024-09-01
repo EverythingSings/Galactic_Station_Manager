@@ -3,6 +3,19 @@ import { changelog } from "./changelog.js";
 import { canAfford, buyUpgrade, getResearchCost } from "./gameHelpers.js";
 import { canMine, canExtract } from "./script.js";
 
+async function getPackageVersion() {
+  try {
+    const response = await fetch('package.json');
+    const packageJson = await response.json();
+    return packageJson.version;
+  } catch (error) {
+    console.error('Error loading package.json:', error);
+    return 'Unknown';
+  }
+}
+const version = await getPackageVersion()
+
+
 function updateDisplay() {
   try {
     const resources = [
@@ -13,6 +26,12 @@ function updateDisplay() {
       "energy",
       "credits",
     ];
+
+    const h1Element = document.querySelector('h1');
+    if (h1Element) {
+      h1Element.textContent = `Galactic Station Manager v${version}`;
+    }
+
     resources.forEach((resource) => {
       const element = document.getElementById(resource);
       if (element) {
@@ -43,8 +62,6 @@ function updateDisplay() {
       return;
     }
     extractGasBtn.disabled = !canExtract();
-
-    document.querySelector('h1').textContent = `Galactic Station Manager v${game.version}`;
 
     updateUpgrades();
     updateBuildings();

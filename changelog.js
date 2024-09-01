@@ -1,5 +1,13 @@
 export const changelog = [
   {
+    version: '0.1.1-beta',
+    date: "9/1/2024",
+    changes: [
+      "Added background image",
+      "Improved version numbering"
+    ]
+  },
+  {
     version: "0.1.0-beta",
     date: "9/1/2024",
     changes: [
