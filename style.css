@@ -36,17 +36,23 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  overflow-y: auto; /* Ensure vertical scroll when needed */
+  overflow-y: auto;
+  background-image: url('https://cdn.midjourney.com/5863a16a-bf83-4f19-92da-df1a411ed306/0_0.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 #game {
-  background-color: var(--primary-color);
+  background-color: rgba(26, 26, 74, 0.9);
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 0 20px var(--glow-effect-color);
   max-width: 800px;
   width: 100%;
-  box-sizing: border-box; /* Include padding and border in width calculation */
+  box-sizing: border-box; 
+  backdrop-filter: blur(5px); 
 }
 
 h1, h2 {
