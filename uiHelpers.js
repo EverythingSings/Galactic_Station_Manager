@@ -2,19 +2,25 @@ import { game } from "./gameState.js";
 import { changelog } from "./changelog.js";
 import { canAfford, buyUpgrade, getResearchCost } from "./gameHelpers.js";
 import { canMine, canExtract } from "./script.js";
+let version = "Loading...";
 
-async function getPackageVersion() {
-  try {
-    const response = await fetch('package.json');
-    const packageJson = await response.json();
-    return packageJson.version;
-  } catch (error) {
-    console.error('Error loading package.json:', error);
-    return 'Unknown';
+export function getPackageVersion() {
+  fetch("package.json")
+    .then((response) => response.json())
+    .then((packageJson) => {
+      version = packageJson.version;
+      updateVersionDisplay();
+    })
+    .catch((error) => {
+      console.error("Error loading package.json:", error);
+    });
+}
+function updateVersionDisplay() {
+  const h1Element = document.querySelector("h1");
+  if (h1Element) {
+    h1Element.textContent = `Galactic Station Manager v${version}`;
   }
 }
-const version = await getPackageVersion()
-
 
 function updateDisplay() {
   try {
@@ -26,11 +32,6 @@ function updateDisplay() {
       "energy",
       "credits",
     ];
-
-    const h1Element = document.querySelector('h1');
-    if (h1Element) {
-      h1Element.textContent = `Galactic Station Manager v${version}`;
-    }
 
     resources.forEach((resource) => {
       const element = document.getElementById(resource);
@@ -286,15 +287,18 @@ function getResourceDescription(resource) {
 }
 
 export function updateChangelog() {
-  const changelogContent = document.getElementById('changelog-content');
-  changelogContent.innerHTML = changelog.map(entry => `
+  const changelogContent = document.getElementById("changelog-content");
+  changelogContent.innerHTML = changelog
+    .map(
+      (entry) => `
     <h3>Version ${entry.version} (${entry.date})</h3>
     <ul>
-      ${entry.changes.map(change => `<li>${change}</li>`).join('')}
+      ${entry.changes.map((change) => `<li>${change}</li>`).join("")}
     </ul>
-  `).join('');
+  `,
+    )
+    .join("");
 }
-
 
 window.showResourceInfo = showResourceInfo;
 

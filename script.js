@@ -1,6 +1,6 @@
 import { game } from "./gameState.js";
 import { saveGameState, loadGameState } from "./gameHelpers.js";
-import { updateDisplay, setupTabs, updateChangelog } from "./uiHelpers.js";
+import { updateDisplay, setupTabs, updateChangelog, getPackageVersion } from "./uiHelpers.js";
 import { buildStructure, buyResource, sellResource } from "./gameHelpers.js";
 
 window.buildStructure = buildStructure;
@@ -49,10 +49,9 @@ function canExtract() {
 
 function animateResourceGeneration(resourceId) {
   const resourceElement = document.getElementById(resourceId);
-  resourceElement.classList.add('resource-pulse');
-  setTimeout(() => resourceElement.classList.remove('resource-pulse'), 500);
+  resourceElement.classList.add("resource-pulse");
+  setTimeout(() => resourceElement.classList.remove("resource-pulse"), 500);
 }
-
 
 function viewCrystals() {
   alert(`You have ${game.crystals} crystals.`);
@@ -99,6 +98,7 @@ window.onload = () => {
   updateDisplay();
   setupEventListeners();
   updateChangelog();
+  getPackageVersion();
 };
 
 setInterval(regenerateEnergy, 1000);
