@@ -17,30 +17,34 @@
         <p>In the year 3057, humanity has spread across the stars,</p>
       </div>
       <div id="resources">
-        <button class="resource-card" id="mineMinerals">
-          <span class="emoji">🪨</span>
-          <span id="minerals">0</span> Minerals
-        </button>
-        <button class="resource-card" id="extractGas">
-          <span class="emoji">💨</span>
-          <span id="gas">0</span> Gas
-        </button>
-        <button class="resource-card" id="viewCrystals">
-          <span class="emoji">💎</span>
-          <span id="crystals">0</span> Crystals
-        </button>
-        <button class="resource-card" id="viewDeuterium">
-          <span class="emoji">🧊</span>
-          <span id="deuterium">0</span> Deuterium
-        </button>
-        <button class="resource-card" id="viewEnergy">
-          <span class="emoji">⚡</span>
-          <span id="energy">100</span> Energy
-        </button>
-        <button class="resource-card" id="viewCredits">
-          <span class="emoji">💰</span>
-          <span id="credits">0</span> Credits
-        </button>
+        <div id="clickable-resources">
+          <button class="resource-card" id="mineMinerals">
+            <span class="emoji">🪨</span>
+            <span id="minerals">0</span> Minerals
+          </button>
+          <button class="resource-card" id="extractGas">
+            <span class="emoji">💨</span>
+            <span id="gas">0</span> Gas
+          </button>
+        </div>
+        <div id="readonly-resources">
+          <div class="readonly-resource">
+            <span class="emoji">💎</span>
+            <span id="crystals">0</span>
+          </div>
+          <div class="readonly-resource">
+            <span class="emoji">🧊</span>
+            <span id="deuterium">0</span>
+          </div>
+          <div class="readonly-resource">
+            <span class="emoji">⚡</span>
+            <span id="energy">100</span>
+          </div>
+          <div class="readonly-resource">
+            <span class="emoji">💰</span>
+            <span id="credits">0</span>
+          </div>
+        </div>
       </div>
       <div id="tabs-container" class="tabs-container">
         <div id="tabs" class="tabs">

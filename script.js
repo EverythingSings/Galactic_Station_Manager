@@ -1,24 +1,17 @@
-import { game } from "./gameState.js";
-import { saveGameState, loadGameState } from "./gameHelpers.js";
+import { game, roles } from "./gameState.js";
+import { saveGameState, loadGameState, canAfford, buyUpgrade, buildStructure, conductResearch, checkMission, unlockMarket, canUnlockMarket, buyResource, sellResource } from "./gameHelpers.js";
 import { updateDisplay, setupTabs, updateChangelog, getPackageVersion } from "./uiHelpers.js";
-import { buildStructure, buyResource, sellResource } from "./gameHelpers.js";
 
 window.buildStructure = buildStructure;
 window.buyResource = buyResource;
 window.sellResource = sellResource;
+window.unlockMarket = unlockMarket;
+window.canUnlockMarket = canUnlockMarket;
 
 function setupEventListeners() {
   document.getElementById("mineMinerals").addEventListener("click", mine);
   document.getElementById("extractGas").addEventListener("click", extract);
 
-  document
-    .getElementById("viewCrystals")
-    .addEventListener("click", viewCrystals);
-  document
-    .getElementById("viewDeuterium")
-    .addEventListener("click", viewDeuterium);
-  document.getElementById("viewEnergy").addEventListener("click", viewEnergy);
-  document.getElementById("viewCredits").addEventListener("click", viewCredits);
 }
 
 function mine() {
@@ -53,22 +46,6 @@ function animateResourceGeneration(resourceId) {
   setTimeout(() => resourceElement.classList.remove("resource-pulse"), 500);
 }
 
-function viewCrystals() {
-  alert(`You have ${game.crystals} crystals.`);
-}
-
-function viewDeuterium() {
-  alert(`You have ${game.deuterium} deuterium.`);
-}
-
-function viewEnergy() {
-  alert(`You have ${game.energy} energy.`);
-}
-
-function viewCredits() {
-  alert(`You have ${game.credits} credits.`);
-}
-
 function regenerateEnergy() {
   try {
     game.energy = Math.min(game.energy + game.energyRegenRate, game.maxEnergy);
@@ -92,6 +69,57 @@ function produceResources() {
   }
 }
 
+function updateRole() {
+  const totalResources = game.minerals + game.gas + game.crystals + game.deuterium;
+  const roleLevel = Math.floor(Math.log10(totalResources));
+  game.role = roles[roleLevel] || roles[Object.keys(roles).length - 1];
+  document.getElementById("role").textContent = game.role;
+}
+
+function checkUpgrades() {
+  game.upgrades.forEach((upgrade, index) => {
+    const button = document.querySelector(`#upgrades button:nth-child(${index + 1})`);
+    if (button) {
+      button.disabled = !canAfford(upgrade.cost);
+    }
+  });
+}
+
+function checkBuildings() {
+  Object.keys(game.buildings).forEach((building) => {
+    const button = document.querySelector(`#buildings button[data-building="${building}"]`);
+    if (button) {
+      const cost = getBuildingCost(building);
+      button.disabled = !canAfford(cost);
+    }
+  });
+}
+
+function checkResearch() {
+  Object.keys(game.research).forEach((tech) => {
+    const button = document.querySelector(`#research button[data-tech="${tech}"]`);
+    if (button) {
+      const cost = getResearchCost(tech);
+      button.disabled = !canAfford(cost);
+    }
+  });
+}
+
+function updateMarketPrices() {
+  Object.keys(game.marketPrices).forEach((resource) => {
+    game.marketPrices[resource] = Math.max(0.5, Math.min(5, game.marketPrices[resource] + (Math.random() - 0.5) * 0.1));
+  });
+  updateDisplay();
+}
+
+function checkMissions() {
+  game.missions.forEach((mission, index) => {
+    if (!game.completedMissions.includes(index)) {
+      checkMission(index);
+    }
+  });
+}
+
 window.onload = () => {
   loadGameState();
   setupTabs();
@@ -103,6 +131,12 @@ window.onload = () => {
 
 setInterval(regenerateEnergy, 1000);
 setInterval(produceResources, 1000);
+setInterval(updateRole, 5000);
+setInterval(checkUpgrades, 1000);
+setInterval(checkBuildings, 1000);
+setInterval(checkResearch, 1000);
+setInterval(updateMarketPrices, 60000);
+setInterval(checkMissions, 5000);
 
 export {
   canMine,

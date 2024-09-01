@@ -21,7 +21,7 @@ html, body {
   user-select: none;
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* Hide horizontal overflow */
+  overflow-x: hidden;
 }
 
 * {
@@ -61,17 +61,54 @@ h1, h2 {
 }
 
 #resources {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   margin-bottom: 20px;
 }
 
-.resource {
+#clickable-resources {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.resource-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 5px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: var(--resource-card-background);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.resource-card:hover {
+  background-color: var(--resource-card-hover-background);
+  transform: scale(1.05);
+}
+
+#readonly-resources {
+  display: flex;
+  justify-content: space-around;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.readonly-resource {
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+  color: var(--text-color);
+}
+
+.readonly-resource .emoji {
+  font-size: 1.2em;
+  margin-right: 5px;
 }
 
 .emoji {
@@ -87,7 +124,6 @@ h1, h2 {
   margin-bottom: 20px;
 }
 
-/* Consistent button styles */
 .action-button, .upgrade-button, .tab-button, .building button, .research-item button, .market-item button, .mission button, .purchase-button {
   background-color: var(--secondary-color);
   color: var(--tab-text-color);
@@ -107,7 +143,6 @@ h1, h2 {
   cursor: not-allowed;
 }
 
-/* Ensure uniform styling across these sections */
 .purchase-button {
   text-align: center;
   display: inline-block;
@@ -133,7 +168,7 @@ h1, h2 {
 
 #tabs {
   display: flex;
-  overflow-x: auto; /* Allow horizontal scrolling */
+  overflow-x: auto;
 }
 
 .tab-button {
@@ -164,47 +199,6 @@ h1, h2 {
 
 .tab-pane.active {
   display: block;
-}
-
-.resource-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  padding: 10px;
-  margin: 10px;
-  cursor: pointer;
-  background-color: var(--resource-card-background);
-  transition: background-color 0.3s, transform 0.3s;
-}
-
-.resource-card:hover {
-  background-color: var(--resource-card-hover-background);
-  transform: scale(1.05);
-}
-
-.resource-card .emoji {
-  font-size: 2em;
-}
-
-.purchase-button {
-  background: #008cba;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 8px;
-  width: 100%;
-}
-
-.purchase-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
 }
 
 .button-content {
