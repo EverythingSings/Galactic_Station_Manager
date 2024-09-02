@@ -1,5 +1,13 @@
 export const changelog = [
   {
+    version: '0.1.3-beta',
+    date: "9/2/2024",
+    changes: [
+      "GSM-42 successfully received transmission from Earth",
+      "GSM-42's mission details have been updated"
+    ]
+  },
+  {
     version: '0.1.2-beta',
     date: "9/1/2024",
     changes: [
