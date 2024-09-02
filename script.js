@@ -1,6 +1,6 @@
 import { game, updateRole } from "./gameState.js";
 import { saveGameState, loadGameState, canAfford, buyUpgrade, buildStructure, conductResearch, checkMission, unlockMarket, canUnlockMarket, buyResource, sellResource } from "./gameHelpers.js";
-import { updateDiplomacy, conductDiplomacy, attemptFirstContact } from "./gameHelpers.js";
+import { updateDiplomacy, conductDiplomacy, generateProgressSummary } from "./gameHelpers.js";
 import { updateDisplay, setupTabs, updateChangelog, getPackageVersion } from "./uiHelpers.js";
 
 window.buildStructure = buildStructure;
@@ -12,6 +12,8 @@ window.canUnlockMarket = canUnlockMarket;
 function setupEventListeners() {
   document.getElementById("mineMinerals").addEventListener("click", mine);
   document.getElementById("extractGas").addEventListener("click", extract);
+
+  document.getElementById("shareProgress").addEventListener("click", shareProgress);
   document.getElementById("diplomacy").addEventListener("click", (e) => {
     if (e.target.tagName === "BUTTON") {
       const action = e.target.textContent.toLowerCase();
@@ -21,6 +23,33 @@ function setupEventListeners() {
     }
   });
 
+}
+
+function shareProgress() {
+  const summary = generateProgressSummary();
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'My Galactic Station Manager Progress',
+      text: summary
+    }).then(() => {
+      console.log('Shared successfully');
+    }).catch((error) => {
+      console.error('Error sharing:', error);
+      fallbackShare(summary);
+    });
+  } else {
+    fallbackShare(summary);
+  }
+}
+function fallbackShare(summary) {
+  const textarea = document.createElement('textarea');
+  textarea.value = summary;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+  alert('Progress summary copied to clipboard!');
 }
 
 function mine() {
@@ -150,7 +179,7 @@ intervals.forEach(({ fn, time }) => setInterval(fn, time));
 export {
   canMine,
   canExtract,
-  setupEventListeners,
+  setupEventListeners, 
   mine,
   extract,
   regenerateEnergy,
