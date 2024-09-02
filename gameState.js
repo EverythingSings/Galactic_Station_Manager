@@ -11,8 +11,11 @@ const game = {
   energyRegenRate: 1,
   mineralPower: 1,
   gasPower: 1,
-  role: "Novice Commander",
+  role: "",
   marketUnlocked: false,
+  firstContactReadiness: 0,
+  alienRaces: [],
+  diplomaticRelations: {},
   upgrades: [
     {
       name: "Advanced Mining Drill",
@@ -26,13 +29,20 @@ const game = {
     },
     {
       name: "Fusion Reactor",
-      cost: { minerals: 50, gas: 50 },
+      cost: { minerals: 50, gas: 50, crystals: 10, deuterium: 10 },
       effect: () => (game.maxEnergy += 50),
     },
     {
       name: "Energy Efficiency",
-      cost: { minerals: 100, gas: 100 },
+      cost: { minerals: 100, gas: 100, crystals: 50, deuterium: 50 },
       effect: () => game.energyRegenRate++,
+    },
+    {
+      name: "Xenocommunication Array",
+      cost: { minerals: 500, crystals: 100, deuterium: 50 },
+      effect: () => {
+        game.firstContactReadiness = (game.firstContactReadiness || 0) + 1;
+      },
     },
   ],
   buildings: {
@@ -88,6 +98,13 @@ const game = {
       check: () => Object.values(game.research).some((level) => level >= 5),
       reward: { credits: 500 },
     },
+    {
+      name: "Market Guru",
+      description:
+        "Unlock the market and accumulate 1000 credits to establish a strong economic foundation.",
+      check: () => game.credits >= 1000,
+      reward: { credits: 1000 },
+    },
   ],
   completedMissions: [],
 };
@@ -98,6 +115,7 @@ const roles = {
   3: "Master Strategist",
   4: "Chief Engineer",
   5: "Grand Scientist",
+  6: "Supreme Commander",
 };
 
 export { game, roles };

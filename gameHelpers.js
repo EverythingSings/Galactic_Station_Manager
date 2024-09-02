@@ -32,6 +32,91 @@ export function saveGameState() {
   }
 }
 
+export function attemptFirstContact() {
+  if (game.firstContactReadiness >= 5) {
+    const newRace = generateAlienRace();
+    game.alienRaces.push(newRace);
+    game.diplomaticRelations[newRace.name] = 0;
+    game.firstContactReadiness -= 5;
+    return newRace;
+  }
+  return null;
+}
+function generateAlienRace() {
+  const races = [
+    "Zorgons",
+    "Blipblops",
+    "Quarxians",
+    "Nebulosians",
+    "Vortexians",
+  ];
+  const name = races[Math.floor(Math.random() * races.length)];
+  return {
+    name,
+    tradePreference: Math.random() < 0.5 ? "minerals" : "gas",
+    personalityTrait: Math.random() < 0.5 ? "peaceful" : "aggressive",
+  };
+}
+export function conductDiplomacy(raceName, action) {
+  const race = game.alienRaces.find((r) => r.name === raceName);
+  if (!race) return;
+  switch (action) {
+    case "trade":
+      if (game[race.tradePreference] >= 100) {
+        game[race.tradePreference] -= 100;
+        game.credits += 150;
+        game.diplomaticRelations[raceName] += 1;
+      }
+      break;
+    case "gift":
+      if (game.credits >= 100) {
+        game.credits -= 100;
+        game.diplomaticRelations[raceName] += 2;
+      }
+      break;
+    case "threaten":
+      game.diplomaticRelations[raceName] -= 2;
+      if (race.personalityTrait === "aggressive") {
+        // Potential for conflict or retaliation
+        game.credits -= 50;
+      }
+      break;
+  }
+  saveGameState();
+}
+
+export function updateDiplomacy() {
+  const diplomacyDiv = document.getElementById("diplomacy");
+  diplomacyDiv.innerHTML = "";
+  const firstContactButton = document.createElement("button");
+  firstContactButton.classList.add("purchase-button");
+  firstContactButton.textContent = `Attempt First Contact (Readiness: ${game.firstContactReadiness}/5)`;
+  firstContactButton.disabled = game.firstContactReadiness < 5;
+  firstContactButton.onclick = () => {
+    const newRace = attemptFirstContact();
+    if (newRace) {
+      showModal(
+        "First Contact!",
+        `You've made contact with the ${newRace.name}!`,
+      );
+      updateDiplomacy();
+    }
+  };
+  diplomacyDiv.appendChild(firstContactButton);
+  game.alienRaces.forEach((race) => {
+    const raceDiv = document.createElement("div");
+    raceDiv.className = "alien-race";
+    raceDiv.innerHTML = `
+      <h3>${race.name}</h3>
+      <p>Relations: ${game.diplomaticRelations[race.name]}</p>
+      <button onclick="conductDiplomacy('${race.name}', 'trade')">Trade</button>
+      <button onclick="conductDiplomacy('${race.name}', 'gift')">Send Gift</button>
+      <button onclick="conductDiplomacy('${race.name}', 'threaten')">Threaten</button>
+    `;
+    diplomacyDiv.appendChild(raceDiv);
+  });
+}
+
 export function loadGameState() {
   try {
     const savedState = localStorage.getItem("gameState");
@@ -82,7 +167,7 @@ export function buyUpgrade(index) {
     }
   } catch (error) {
     console.error("Error in buyUpgrade function:", error);
-    throw error; 
+    throw error;
   }
 }
 
@@ -127,10 +212,9 @@ export function conductResearch(tech) {
     }
   } catch (error) {
     console.error("Error in conductResearch function:", error);
-    throw error; 
+    throw error;
   }
 }
-
 
 export function getResearchCost(tech) {
   const baseCosts = {
@@ -216,8 +300,6 @@ export function canExtract() {
   return game.energy >= 1;
 }
 
-
-
 export function buyResource(resource, amount = 10) {
   if (!game.marketUnlocked) {
     console.log("Market is not unlocked yet!");
@@ -225,15 +307,21 @@ export function buyResource(resource, amount = 10) {
   }
 
   const cost = game.marketPrices[resource] * amount;
-  console.log(`Attempting to buy ${amount} ${resource} for ${cost} credits. Current credits: ${game.credits}`);
+  console.log(
+    `Attempting to buy ${amount} ${resource} for ${cost} credits. Current credits: ${game.credits}`,
+  );
 
   if (game.credits >= cost) {
     game.credits -= cost;
     game[resource] += amount;
-    console.log(`Successfully bought ${amount} ${resource} for ${cost} credits. New balance: ${game.credits} credits, ${game[resource]} ${resource}`);
+    console.log(
+      `Successfully bought ${amount} ${resource} for ${cost} credits. New balance: ${game.credits} credits, ${game[resource]} ${resource}`,
+    );
     saveGameState();
   } else {
-    console.log(`Not enough credits to buy ${amount} ${resource}. Required: ${cost}, Available: ${game.credits}`);
+    console.log(
+      `Not enough credits to buy ${amount} ${resource}. Required: ${cost}, Available: ${game.credits}`,
+    );
   }
 }
 
@@ -243,7 +331,9 @@ export function sellResource(resource, amount = 10) {
     return;
   }
 
-  console.log(`Attempting to sell ${amount} ${resource}. Current amount: ${game[resource]}`);
+  console.log(
+    `Attempting to sell ${amount} ${resource}. Current amount: ${game[resource]}`,
+  );
   const availableAmount = Math.min(game[resource], amount);
   if (availableAmount > 0) {
     game[resource] -= availableAmount;
@@ -252,7 +342,9 @@ export function sellResource(resource, amount = 10) {
     console.log(`Sold ${availableAmount} ${resource} for ${earnings} credits`);
     saveGameState();
   } else {
-    console.log(`Not enough ${resource} to sell. Current amount: ${game[resource]}`);
+    console.log(
+      `Not enough ${resource} to sell. Current amount: ${game[resource]}`,
+    );
   }
 }
 export function checkMission(index) {
@@ -267,7 +359,7 @@ export function canUnlockMarket() {
   const unlockCost = {
     minerals: 500,
     gas: 250,
-    energy: 1000
+    energy: 1000,
   };
   return canAfford(unlockCost);
 }
@@ -276,7 +368,7 @@ export function unlockMarket() {
   const unlockCost = {
     minerals: 500,
     gas: 250,
-    energy: 1000
+    energy: 1000,
   };
   if (canUnlockMarket()) {
     Object.entries(unlockCost).forEach(([resource, amount]) => {
@@ -287,12 +379,8 @@ export function unlockMarket() {
   }
 }
 
-
-
 window.buildStructure = buildStructure;
 window.buyResource = buyResource;
 window.sellResource = sellResource;
 window.unlockMarket = unlockMarket;
 window.canUnlockMarket = canUnlockMarket;
-
-

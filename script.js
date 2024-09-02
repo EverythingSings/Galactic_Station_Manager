@@ -1,5 +1,6 @@
 import { game, roles } from "./gameState.js";
 import { saveGameState, loadGameState, canAfford, buyUpgrade, buildStructure, conductResearch, checkMission, unlockMarket, canUnlockMarket, buyResource, sellResource } from "./gameHelpers.js";
+import { updateDiplomacy, conductDiplomacy, attemptFirstContact } from "./gameHelpers.js";
 import { updateDisplay, setupTabs, updateChangelog, getPackageVersion } from "./uiHelpers.js";
 
 window.buildStructure = buildStructure;
@@ -11,6 +12,14 @@ window.canUnlockMarket = canUnlockMarket;
 function setupEventListeners() {
   document.getElementById("mineMinerals").addEventListener("click", mine);
   document.getElementById("extractGas").addEventListener("click", extract);
+  document.getElementById("diplomacy").addEventListener("click", (e) => {
+    if (e.target.tagName === "BUTTON") {
+      const action = e.target.textContent.toLowerCase();
+      const raceName = e.target.closest(".alien-race").querySelector("h3").textContent;
+      conductDiplomacy(raceName, action);
+      updateDiplomacy();
+    }
+  });
 
 }
 
@@ -129,14 +138,19 @@ window.onload = () => {
   getPackageVersion();
 };
 
-setInterval(regenerateEnergy, 1000);
-setInterval(produceResources, 1000);
-setInterval(updateRole, 5000);
-setInterval(checkUpgrades, 1000);
-setInterval(checkBuildings, 1000);
-setInterval(checkResearch, 1000);
-setInterval(updateMarketPrices, 60000);
-setInterval(checkMissions, 5000);
+const intervals = [
+  { fn: regenerateEnergy, time: 1000 },
+  { fn: produceResources, time: 1000 },
+  { fn: updateRole, time: 5000 },
+  { fn: checkUpgrades, time: 1000 },
+  { fn: checkBuildings, time: 1000 },
+  { fn: checkResearch, time: 1000 },
+  { fn: updateMarketPrices, time: 60000 },
+  { fn: checkMissions, time: 5000 },
+  { fn: () => updateDiplomacy(), time: 5000 }
+];
+
+intervals.forEach(({ fn, time }) => setInterval(fn, time));
 
 export {
   canMine,

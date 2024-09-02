@@ -279,7 +279,7 @@ function getResourceDescription(resource) {
     minerals: "Basic building material for your space station.",
     gas: "Fuel for advanced technologies and operations.",
     crystals: "Used in high-tech equipment and research.",
-    deuterium: "Powers fusion reactors and advanced propulsion systems.",
+    deuterium: "Powers fusion reactors and advanced communication systems.",
     energy: "Powers your station and all activities.",
     credits: "Used to trade and procure essential items in the market.",
   };
