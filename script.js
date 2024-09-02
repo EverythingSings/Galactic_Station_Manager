@@ -79,8 +79,8 @@ function produceResources() {
 }
 
 function updateRole() {
-  const totalResources = game.minerals + game.gas + game.crystals + game.deuterium;
-  const roleLevel = Math.floor(Math.log10(totalResources));
+  const completedMissions = game.completedMissions.length;
+  const roleLevel = Math.floor(Math.log10(completedMissions));
   game.role = roles[roleLevel] || roles[Object.keys(roles).length - 1];
   document.getElementById("role").textContent = game.role;
 }
