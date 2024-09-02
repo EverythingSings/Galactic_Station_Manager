@@ -12,7 +12,7 @@ const missionEffects = {
   "Gas Giant": () => game.gas >= 1000,
   "Crystal Clear": () => game.crystals >= 500,
   "Heavy Water": () => game.deuterium >= 250,
-  Researcher: () => Object.values(game.research).some((level) => level >= 5),
+  "Researcher": () => Object.values(game.research).some((level) => level >= 5),
 };
 
 export function saveGameState() {
@@ -49,6 +49,14 @@ function generateAlienRace() {
     "Quarxians",
     "Nebulosians",
     "Vortexians",
+    "Xylophites",
+    "Orbitrons",
+    "Luminara",
+    "Plasmoids",
+    "Aetherians",
+    "Quasarians",
+    "Galactoids",
+    "Novaquins"
   ];
   const name = races[Math.floor(Math.random() * races.length)];
   return {
