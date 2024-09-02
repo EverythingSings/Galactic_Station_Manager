@@ -9,6 +9,7 @@
     <meta name="description" content="Clicker game made by EverythingSings, formless art for the future: In the year 3057, Humanity has spread across the stars. You are the newly appointed commander of GSM-42, a critical outpost in a resource-rich (but potentially dangerous) sector." />
     <title>Galactic Station Manager</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   </head>
   <body>
     <div id="game">
@@ -78,26 +79,21 @@
           </div>
         </div>
       </div>
-      <div id="tabs-container" class="tabs-container">
-        <div id="tabs" class="tabs">
-          <button class="tab-button active" data-tab="main">Main</button>
-          <button class="tab-button" data-tab="production">Production</button>
-          <button class="tab-button" data-tab="research">Research</button>
-          <button class="tab-button" data-tab="market">Market</button>
-          <button class="tab-button" data-tab="missions">Missions</button>
-          <button class="tab-button" data-tab="diplomacy">Diplomacy</button>
-          <button id="shareProgress" class="tab-button">Share Progress</button>
-          <button class="tab-button" data-tab="changelog">Changelog</button>
-          <button
-            class="tab-button"
-            data-tab="contact"
-            onclick="openContactForm()"
-          >
-            Made by EverythingSings
-          </button>
-        </div>
-      </div>
-      <div id="tab-content">
+        <div id="tabs-container">
+          <div id="tabs" class="tabs">
+            <button class="tab-button active" data-tab="main"><i class="fas fa-home"></i> Main</button>
+            <button class="tab-button" data-tab="production"><i class="fas fa-industry"></i> Production</button>
+            <button class="tab-button" data-tab="research"><i class="fas fa-flask"></i> Research</button>
+            <button class="tab-button" data-tab="market"><i class="fas fa-shopping-cart"></i> Market</button>
+            <button class="tab-button" data-tab="missions"><i class="fas fa-flag"></i> Missions</button>
+            <button class="tab-button" data-tab="diplomacy"><i class="fas fa-handshake"></i> Diplomacy</button>
+            <button id="shareProgress" class="tab-button"><i class="fas fa-share-alt"></i> Share Progress</button>
+            <button class="tab-button" data-tab="changelog"><i class="fas fa-clipboard-list"></i> Changelog</button>
+            <button class="tab-button" data-tab="contact" onclick="openContactForm()">
+              <i class="fas fa-envelope"></i> Made by EverythingSings
+            </button>
+          </div>
+        </div>      <div id="tab-content">
         <div id="main-tab" class="tab-pane active">
           <h2>Upgrades</h2>
           <div id="upgrades"></div>
