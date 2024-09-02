@@ -109,13 +109,27 @@ const game = {
   completedMissions: [],
 };
 
-const roles = {
-  1: "Junior Commander",
-  2: "Senior Commander",
-  3: "Master Strategist",
-  4: "Chief Engineer",
-  5: "Grand Scientist",
-  6: "Supreme Commander",
-};
+
+const roles = [
+  { name: "Junior Commander", requiredMissions: 0 },
+  { name: "Senior Commander", requiredMissions: 1 },
+  { name: "Master Strategist", requiredMissions: 2 },
+  { name: "Chief Engineer", requiredMissions: 3 },
+  { name: "Grand Scientist", requiredMissions: 4 },
+  { name: "Supreme Commander", requiredMissions: 5 }
+];
+
+export function updateRole() {
+  const completedMissionsCount = game.completedMissions.length;
+  const newRole = roles.reduce((highest, role) => 
+    completedMissionsCount >= role.requiredMissions ? role : highest
+  );
+
+  if (game.role !== newRole.name) {
+    game.role = newRole.name;
+    console.log(`Congratulations! You've been promoted to ${newRole.name}!`);
+    // You could add a UI notification here as well
+  }
+}
 
 export { game, roles };

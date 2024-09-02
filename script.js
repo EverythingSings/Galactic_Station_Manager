@@ -1,4 +1,4 @@
-import { game, roles } from "./gameState.js";
+import { game, updateRole } from "./gameState.js";
 import { saveGameState, loadGameState, canAfford, buyUpgrade, buildStructure, conductResearch, checkMission, unlockMarket, canUnlockMarket, buyResource, sellResource } from "./gameHelpers.js";
 import { updateDiplomacy, conductDiplomacy, attemptFirstContact } from "./gameHelpers.js";
 import { updateDisplay, setupTabs, updateChangelog, getPackageVersion } from "./uiHelpers.js";
@@ -78,12 +78,7 @@ function produceResources() {
   }
 }
 
-function updateRole() {
-  const completedMissions = game.completedMissions.length;
-  const roleLevel = Math.floor(Math.log10(completedMissions));
-  game.role = roles[roleLevel] || roles[Object.keys(roles).length - 1];
-  document.getElementById("role").textContent = game.role;
-}
+
 
 function checkUpgrades() {
   game.upgrades.forEach((upgrade, index) => {
