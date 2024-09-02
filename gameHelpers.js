@@ -15,6 +15,30 @@ const missionEffects = {
   "Researcher": () => Object.values(game.research).some((level) => level >= 5),
 };
 
+export function generateProgressSummary() {
+  return `
+🚀 Galactic Station Manager Progress 🚀
+Role: ${game.role}
+Resources:
+  Minerals: ${Math.floor(game.minerals)}
+  Gas: ${Math.floor(game.gas)}
+  Crystals: ${Math.floor(game.crystals)}
+  Deuterium: ${Math.floor(game.deuterium)}
+  Energy: ${Math.floor(game.energy)}
+  Credits: ${Math.floor(game.credits)}
+Buildings:
+${Object.entries(game.buildings)
+  .map(([building, count]) => `  ${building}: ${count}`)
+  .join('\n')}
+Research Levels:
+${Object.entries(game.research)
+  .map(([tech, level]) => `  ${tech}: ${level}`)
+  .join('\n')}
+Completed Missions: ${game.completedMissions.length}
+Alien Races Contacted: ${game.alienRaces.length}
+  `;
+}
+
 export function saveGameState() {
   try {
     const gameState = {
@@ -392,3 +416,4 @@ window.buyResource = buyResource;
 window.sellResource = sellResource;
 window.unlockMarket = unlockMarket;
 window.canUnlockMarket = canUnlockMarket;
+window.conductResearch = conductResearch;
