@@ -244,3 +244,15 @@ h1, h2 {
 .resource-pulse {
   animation: resourcePulse 0.5s ease-in-out;
 }
+
+:root {
+  --button-click-duration: 0.2s;
+}
+
+button, .resource-card {
+  transition: transform var(--button-click-duration) ease-in-out;
+}
+
+button:active:not(:disabled), .resource-card:active {
+  transform: scale(0.95);
+}
