@@ -29,12 +29,12 @@ const game = {
     },
     {
       name: "Fusion Reactor",
-      cost: { minerals: 50, gas: 50, crystals: 10, deuterium: 10 },
+      cost: { minerals: 50, gas: 50 },
       effect: () => (game.maxEnergy += 50),
     },
     {
       name: "Energy Efficiency",
-      cost: { minerals: 100, gas: 100, crystals: 50, deuterium: 50 },
+      cost: { minerals: 100, gas: 100 },
       effect: () => game.energyRegenRate++,
     },
     {
@@ -98,13 +98,13 @@ const game = {
       check: () => Object.values(game.research).some((level) => level >= 5),
       reward: { credits: 500 },
     },
-    {
-      name: "Market Guru",
-      description:
-        "Unlock the market and accumulate 1000 credits to establish a strong economic foundation.",
-      check: () => game.credits >= 1000,
-      reward: { credits: 1000 },
-    },
+    // {
+    //   name: "Market Guru",
+    //   description:
+    //     "Unlock the market and accumulate 1000 credits to establish a strong economic foundation.",
+    //   check: () => game.credits >= 1000,
+    //   reward: { credits: 1000 },
+    // },
   ],
   completedMissions: [],
 };
