@@ -1,7 +1,7 @@
 import { game, updateRole } from "./gameState.js";
 import { saveGameState, loadGameState, canAfford, buyUpgrade, buildStructure, conductResearch, checkMission, unlockMarket, canUnlockMarket, buyResource, sellResource } from "./gameHelpers.js";
 import { updateDiplomacy, conductDiplomacy, generateProgressSummary } from "./gameHelpers.js";
-import { updateDisplay, setupTabs, updateChangelog, getPackageVersion } from "./uiHelpers.js";
+import { updateDisplay, setupTabs, updateChangelog } from "./uiHelpers.js";
 
 window.buildStructure = buildStructure;
 window.buyResource = buyResource;
@@ -166,7 +166,6 @@ window.onload = () => {
   updateDisplay();
   setupEventListeners();
   updateChangelog();
-  getPackageVersion();
 };
 
 const intervals = [

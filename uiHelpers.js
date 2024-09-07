@@ -2,25 +2,8 @@ import { game } from "./gameState.js";
 import { changelog } from "./changelog.js";
 import { canAfford, buyUpgrade, getResearchCost } from "./gameHelpers.js";
 import { canMine, canExtract } from "./script.js";
-let version = "Loading...";
 
-export function getPackageVersion() {
-  fetch("package.json")
-    .then((response) => response.json())
-    .then((packageJson) => {
-      version = packageJson.version;
-      updateVersionDisplay();
-    })
-    .catch((error) => {
-      console.error("Error loading package.json:", error);
-    });
-}
-function updateVersionDisplay() {
-  const h1Element = document.querySelector("h1");
-  if (h1Element) {
-    h1Element.textContent = `Galactic Station Manager v${version}`;
-  }
-}
+
 
 function updateDisplay() {
   try {
