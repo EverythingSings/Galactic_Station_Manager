@@ -219,12 +219,22 @@ function updateMissions() {
     const missionsDiv = document.getElementById("missions");
     missionsDiv.innerHTML = "";
     game.missions.forEach((mission, index) => {
-      if (!game.completedMissions.includes(index)) {
-        const div = document.createElement("div");
-        div.className = "mission";
-        div.innerHTML = `<h3>${mission.name}</h3><p>${mission.description}</p><button class="purchase-button" onclick="checkMission(${index})" ${mission.check() ? "" : "disabled"}>Check Progress</button>`;
-        missionsDiv.appendChild(div);
+      const div = document.createElement("div");
+      div.className = "mission";
+      const isCompleted = game.completedMissions.includes(index);
+
+      div.innerHTML = `
+        <h3>${mission.name} ${isCompleted ? "✅" : ""}</h3>
+        <p>${mission.description}</p>
+        ${isCompleted ? '<p class="mission-completed">Mission Completed!</p>' : ""}
+        ${isCompleted ? `<p class="mission-reward">Reward: ${mission.reward.credits} credits</p>` : ""}
+      `;
+
+      if (isCompleted) {
+        div.classList.add("mission-completed");
       }
+
+      missionsDiv.appendChild(div);
     });
   } catch (error) {
     console.error("Error updating missions:", error);

@@ -256,3 +256,31 @@ button, .resource-card {
 button:active:not(:disabled), .resource-card:active {
   transform: scale(0.95);
 }
+
+.mission {
+  background-color: var(--secondary-color);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.mission h3 {
+  margin-top: 0;
+}
+
+.mission-completed {
+  opacity: 0.7;
+}
+
+.mission-completed h3 {
+  color: var(--highlight-color);
+}
+
+.mission-completed .mission-completed {
+  color: var(--highlight-color);
+  font-weight: bold;
+}
+
+.mission-reward {
+  font-style: italic;
+}
