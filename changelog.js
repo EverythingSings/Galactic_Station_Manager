@@ -1,5 +1,13 @@
 export const changelog = [
   {
+    version: '0.1.4-beta',
+    date: "9/7/2024",
+    changes: [
+      "Enhanced the Missions UI",
+      "Created an About tab",
+    ]
+  },
+  {
     version: '0.1.3-beta',
     date: "9/2/2024",
     changes: [

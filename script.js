@@ -13,7 +13,14 @@ function setupEventListeners() {
   document.getElementById("mineMinerals").addEventListener("click", mine);
   document.getElementById("extractGas").addEventListener("click", extract);
 
-  document.getElementById("shareProgress").addEventListener("click", shareProgress);
+  document.getElementById("about-tab").addEventListener("click", (e) => {
+    if (e.target.id === "shareProgress") {
+      shareProgress();
+    } else if (e.target.textContent.includes("Contact EverythingSings")) {
+      openContactForm();
+    }
+  });
+
   document.getElementById("diplomacy").addEventListener("click", (e) => {
     if (e.target.tagName === "BUTTON") {
       const action = e.target.textContent.toLowerCase();
@@ -22,8 +29,8 @@ function setupEventListeners() {
       updateDiplomacy();
     }
   });
-
 }
+
 
 function shareProgress() {
   const summary = generateProgressSummary();
